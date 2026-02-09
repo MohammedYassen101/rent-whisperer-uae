@@ -17,6 +17,7 @@ import { addMonths, format } from "date-fns";
 import PaymentSchedule from "./PaymentSchedule";
 import UnitSearchSelect from "./UnitSearchSelect";
 import { toast } from "sonner";
+import { rentCalculatorSchema } from "@/utils/validation";
 
 export default function RentCalculator() {
   const [tenantName, setTenantName] = useState("");
@@ -56,32 +57,22 @@ export default function RentCalculator() {
   }, [buildingId]);
 
   const handleCalculate = () => {
-    if (!tenantName.trim()) {
-      toast.error("Please enter the tenant name");
-      return;
-    }
-    if (!contractType) {
-      toast.error("Please select a contract type");
-      return;
-    }
-    if (!buildingId) {
-      toast.error("Please select a building");
-      return;
-    }
-    if (!unitId) {
-      toast.error("Please select a unit");
-      return;
-    }
-    if (!leaseStartDate) {
-      toast.error("Please select a lease start date");
-      return;
-    }
-    if (annualRent <= 0) {
-      toast.error("Annual rent must be greater than 0");
+    const result = rentCalculatorSchema.safeParse({
+      tenantName,
+      companyName,
+      contractType,
+      buildingId,
+      unitId,
+      leaseStartDate,
+      annualRent,
+    });
+
+    if (!result.success) {
+      toast.error(result.error.errors[0]?.message || "Please fix the form errors");
       return;
     }
 
-    const calculation = calculateRent(annualRent, parseInt(numPayments), isCommercial);
+    const calculation = calculateRent(result.data.annualRent, parseInt(numPayments), isCommercial);
     const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
 
     setResults({ calculation, schedule });
@@ -154,6 +145,7 @@ export default function RentCalculator() {
                 placeholder="Enter full name"
                 value={tenantName}
                 onChange={(e) => setTenantName(e.target.value)}
+                maxLength={100}
               />
             </div>
 
@@ -196,6 +188,7 @@ export default function RentCalculator() {
                   placeholder="Enter company name"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
+                  maxLength={100}
                 />
               </div>
             )}

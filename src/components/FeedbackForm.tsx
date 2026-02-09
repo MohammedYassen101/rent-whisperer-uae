@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Star, Send } from "lucide-react";
 import { saveFeedback } from "@/utils/storage";
 import { toast } from "sonner";
+import { feedbackSchema } from "@/utils/validation";
 
 export default function FeedbackForm() {
   const [tenantName, setTenantName] = useState("");
@@ -17,17 +18,19 @@ export default function FeedbackForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tenantName.trim() || rating === 0) {
-      toast.error("Please enter your name and select a rating");
+    const result = feedbackSchema.safeParse({
+      tenantName,
+      companyName,
+      rating,
+      comment,
+    });
+
+    if (!result.success) {
+      toast.error(result.error.errors[0]?.message || "Please fix the form errors");
       return;
     }
 
-    saveFeedback({
-      tenantName: tenantName.trim(),
-      companyName: companyName.trim(),
-      rating,
-      comment: comment.trim(),
-    });
+    saveFeedback(result.data as Required<typeof result.data>);
 
     toast.success("Thank you for your feedback!");
     setTenantName("");
@@ -50,6 +53,7 @@ export default function FeedbackForm() {
                 placeholder="Tenant name"
                 value={tenantName}
                 onChange={(e) => setTenantName(e.target.value)}
+                maxLength={100}
               />
             </div>
             <div className="space-y-2">
@@ -58,6 +62,7 @@ export default function FeedbackForm() {
                 placeholder="Company name"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
+                maxLength={100}
               />
             </div>
           </div>
@@ -93,6 +98,7 @@ export default function FeedbackForm() {
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              maxLength={1000}
             />
           </div>
 
