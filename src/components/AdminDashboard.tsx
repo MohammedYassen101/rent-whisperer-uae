@@ -14,6 +14,7 @@ import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import AdminTrendsChart from "@/components/AdminTrendsChart";
 
 export default function AdminDashboard() {
   const { signOut } = useAuth();
@@ -177,6 +178,9 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Trends Chart */}
+      <AdminTrendsChart records={records} requests={requests} feedback={feedback} />
 
       {/* Rent Increase Toggle */}
       <Card className="shadow-card animate-fade-in">
