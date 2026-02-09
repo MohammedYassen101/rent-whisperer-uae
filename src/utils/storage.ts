@@ -1,107 +1,170 @@
-import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
-
-const STORAGE_KEYS = {
-  TENANT_RECORDS: "alyassia_tenant_records",
-  MAINTENANCE_REQUESTS: "alyassia_maintenance_requests",
-  RENT_INCREASE: "alyassia_rent_increase",
-  FEEDBACK: "alyassia_feedback",
-};
-
-// Tenant Records
-export function saveTenantRecord(record: Omit<TenantRecord, "id" | "visitCount" | "lastVisit">): void {
-  const records = getTenantRecords();
-  const existing = records.find(
-    (r) => r.tenantName === record.tenantName && r.unitNumber === record.unitNumber && r.buildingName === record.buildingName
-  );
-
-  if (existing) {
-    existing.visitCount += 1;
-    existing.lastVisit = new Date().toISOString();
-    existing.annualRent = record.annualRent;
-  } else {
-    records.push({
-      ...record,
-      id: crypto.randomUUID(),
-      visitCount: 1,
-      lastVisit: new Date().toISOString(),
-    });
-  }
-
-  localStorage.setItem(STORAGE_KEYS.TENANT_RECORDS, JSON.stringify(records));
-}
-
-export function getTenantRecords(): TenantRecord[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.TENANT_RECORDS) || "[]");
-  } catch {
-    return [];
-  }
-}
+import { supabase } from "@/integrations/supabase/client";
 
 // Maintenance Requests
-export function saveMaintenanceRequest(request: Omit<MaintenanceRequest, "id" | "submittedAt" | "status">): void {
-  const requests = getMaintenanceRequests();
-  requests.push({
-    ...request,
-    id: crypto.randomUUID(),
-    submittedAt: new Date().toISOString(),
-    status: "pending",
+export async function saveMaintenanceRequest(request: {
+  tenantName: string;
+  companyName: string;
+  unitNumber: string;
+  building: string;
+  description: string;
+  priority: string;
+}): Promise<void> {
+  const { error } = await supabase.from("maintenance_requests").insert({
+    tenant_name: request.tenantName,
+    company_name: request.companyName,
+    unit_number: request.unitNumber,
+    building: request.building,
+    description: request.description,
+    priority: request.priority,
   });
-  localStorage.setItem(STORAGE_KEYS.MAINTENANCE_REQUESTS, JSON.stringify(requests));
+  if (error) throw error;
 }
 
-export function getMaintenanceRequests(): MaintenanceRequest[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.MAINTENANCE_REQUESTS) || "[]");
-  } catch {
-    return [];
-  }
+export async function getMaintenanceRequests() {
+  const { data, error } = await supabase
+    .from("maintenance_requests")
+    .select("*")
+    .order("submitted_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    tenantName: r.tenant_name,
+    companyName: r.company_name ?? "",
+    unitNumber: r.unit_number,
+    building: r.building,
+    description: r.description,
+    priority: r.priority as "low" | "medium" | "high" | "urgent",
+    submittedAt: r.submitted_at,
+    status: r.status as "pending" | "in-progress" | "completed",
+  }));
 }
 
-export function updateMaintenanceStatus(id: string, status: MaintenanceRequest["status"]): void {
-  const requests = getMaintenanceRequests();
-  const request = requests.find((r) => r.id === id);
-  if (request) {
-    request.status = status;
-    localStorage.setItem(STORAGE_KEYS.MAINTENANCE_REQUESTS, JSON.stringify(requests));
-  }
-}
-
-// Rent Increase
-export function getRentIncrease(): { enabled: boolean; percentage: number } {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.RENT_INCREASE) || '{"enabled":false,"percentage":5}');
-  } catch {
-    return { enabled: false, percentage: 5 };
-  }
-}
-
-export function setRentIncrease(enabled: boolean, percentage: number = 5): void {
-  localStorage.setItem(STORAGE_KEYS.RENT_INCREASE, JSON.stringify({ enabled, percentage }));
+export async function updateMaintenanceStatus(id: string, status: string): Promise<void> {
+  const { error } = await supabase
+    .from("maintenance_requests")
+    .update({ status })
+    .eq("id", id);
+  if (error) throw error;
 }
 
 // Feedback
-export function saveFeedback(feedback: Omit<TenantFeedback, "id" | "submittedAt">): void {
-  const allFeedback = getFeedback();
-  allFeedback.push({
-    ...feedback,
-    id: crypto.randomUUID(),
-    submittedAt: new Date().toISOString(),
+export async function saveFeedback(feedback: {
+  tenantName: string;
+  companyName: string;
+  rating: number;
+  comment: string;
+}): Promise<void> {
+  const { error } = await supabase.from("feedback").insert({
+    tenant_name: feedback.tenantName,
+    company_name: feedback.companyName,
+    rating: feedback.rating,
+    comment: feedback.comment,
   });
-  localStorage.setItem(STORAGE_KEYS.FEEDBACK, JSON.stringify(allFeedback));
+  if (error) throw error;
 }
 
-export function getFeedback(): TenantFeedback[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.FEEDBACK) || "[]");
-  } catch {
-    return [];
+export async function getFeedback() {
+  const { data, error } = await supabase
+    .from("feedback")
+    .select("*")
+    .order("submitted_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((f) => ({
+    id: f.id,
+    tenantName: f.tenant_name,
+    companyName: f.company_name ?? "",
+    rating: f.rating,
+    comment: f.comment ?? "",
+    submittedAt: f.submitted_at,
+  }));
+}
+
+// Tenant Records
+export async function saveTenantRecord(record: {
+  tenantName: string;
+  companyName: string;
+  buildingName: string;
+  unitNumber: string;
+  unitType: string;
+  annualRent: number;
+  calculatedAt: string;
+}): Promise<void> {
+  // Upsert: find existing record, update visit count
+  const { data: existing } = await supabase
+    .from("tenant_records")
+    .select("id, visit_count")
+    .eq("tenant_name", record.tenantName)
+    .eq("unit_number", record.unitNumber)
+    .eq("building_name", record.buildingName)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase
+      .from("tenant_records")
+      .update({
+        visit_count: existing.visit_count + 1,
+        last_visit: new Date().toISOString(),
+        annual_rent: record.annualRent,
+      })
+      .eq("id", existing.id);
+  } else {
+    await supabase.from("tenant_records").insert({
+      tenant_name: record.tenantName,
+      company_name: record.companyName,
+      building_name: record.buildingName,
+      unit_number: record.unitNumber,
+      unit_type: record.unitType,
+      annual_rent: record.annualRent,
+      calculated_at: record.calculatedAt,
+    });
   }
 }
 
-// Apply rent increase to a base amount
-export function applyRentIncrease(baseRent: number): number {
-  const setting = getRentIncrease();
+export async function getTenantRecords() {
+  const { data, error } = await supabase
+    .from("tenant_records")
+    .select("*")
+    .order("last_visit", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    tenantName: r.tenant_name,
+    companyName: r.company_name ?? "",
+    buildingName: r.building_name,
+    unitNumber: r.unit_number,
+    unitType: r.unit_type,
+    annualRent: Number(r.annual_rent),
+    calculatedAt: r.calculated_at,
+    visitCount: r.visit_count,
+    lastVisit: r.last_visit,
+  }));
+}
+
+// App Settings (rent increase)
+export async function getRentIncrease(): Promise<{ enabled: boolean; percentage: number }> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", "rent_increase")
+    .maybeSingle();
+  if (data?.value) {
+    const val = data.value as { enabled: boolean; percentage: number };
+    return { enabled: val.enabled ?? false, percentage: val.percentage ?? 5 };
+  }
+  return { enabled: false, percentage: 5 };
+}
+
+export async function setRentIncrease(enabled: boolean, percentage: number = 5): Promise<void> {
+  const { error } = await supabase
+    .from("app_settings")
+    .update({ value: { enabled, percentage }, updated_at: new Date().toISOString() })
+    .eq("key", "rent_increase");
+  if (error) throw error;
+}
+
+// Apply rent increase to a base amount (needs async now)
+export async function applyRentIncrease(baseRent: number): Promise<number> {
+  const setting = await getRentIncrease();
   if (setting.enabled) {
     return baseRent * (1 + setting.percentage / 100);
   }

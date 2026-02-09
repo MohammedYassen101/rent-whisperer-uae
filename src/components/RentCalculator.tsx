@@ -46,7 +46,7 @@ export default function RentCalculator() {
 
   useEffect(() => {
     if (selectedUnit) {
-      setAnnualRent(applyRentIncrease(selectedUnit.annualRent));
+      applyRentIncrease(selectedUnit.annualRent).then(setAnnualRent);
     }
   }, [selectedUnit]);
 
@@ -77,7 +77,7 @@ export default function RentCalculator() {
 
     setResults({ calculation, schedule });
 
-    // Save for admin tracking
+    // Save for admin tracking (fire and forget)
     saveTenantRecord({
       tenantName: tenantName.trim(),
       companyName: companyName.trim(),
@@ -86,7 +86,7 @@ export default function RentCalculator() {
       unitType: selectedUnit?.type || "",
       annualRent,
       calculatedAt: new Date().toISOString(),
-    });
+    }).catch(() => {});
 
     toast.success("Rent calculated successfully!");
   };
