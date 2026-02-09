@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Users, Eye, Star, Wrench, TrendingUp, Calendar,
-  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText
+  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord } from "@/utils/storage";
@@ -170,6 +170,11 @@ export default function AdminDashboard() {
           <p className="text-muted-foreground mt-1">Manage tenants, maintenance requests, and settings.</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <a href="mailto:info@alyassiaproperties.ae">
+              <Mail className="w-4 h-4 mr-1" /> Email Us
+            </a>
+          </Button>
           <Button variant="outline" size="sm" onClick={handleExportExcel}>
             <Download className="w-4 h-4 mr-1" /> Export Excel
           </Button>
