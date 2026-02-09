@@ -13,21 +13,21 @@ export default function Header() {
   const location = useLocation();
 
   return (
-    <header className="bg-surface-dark sticky top-0 z-50">
+    <header className="bg-white sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <img
               src={logo}
               alt="Alyassia Properties"
-              className="h-14 md:h-16 w-auto object-contain"
+              className="h-16 md:h-20 w-auto object-contain"
             />
             <div className="hidden sm:block">
-              <div className="text-sm md:text-base font-display font-bold text-surface-dark-foreground tracking-wide">
+              <div className="text-sm md:text-base font-display font-bold text-foreground tracking-wide">
                 Alyassia Properties
               </div>
-              <div className="text-[10px] md:text-xs text-surface-dark-foreground/50">
+              <div className="text-[10px] md:text-xs text-muted-foreground">
                 L.L.C. O.P.C.
               </div>
             </div>
@@ -47,7 +47,7 @@ export default function Header() {
                     ${
                       isActive
                         ? "bg-primary text-primary-foreground"
-                        : "text-surface-dark-foreground/70 hover:text-surface-dark-foreground hover:bg-surface-dark-foreground/10"
+                        : "text-foreground/70 hover:text-foreground hover:bg-secondary"
                     }
                   `}
                 >
