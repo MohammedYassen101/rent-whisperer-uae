@@ -19,7 +19,8 @@ export interface Fee {
   id: string;
   name: string;
   nameAr: string;
-  amount: number;
+  amountCommercial: number;
+  amountResidential: number;
   description: string;
 }
 

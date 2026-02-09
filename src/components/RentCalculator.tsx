@@ -113,6 +113,7 @@ export default function RentCalculator() {
       leaseStartDate: format(leaseStart, "dd MMM yyyy"),
       leaseEndDate: format(leaseEnd, "dd MMM yyyy"),
       leaseType: leaseType === "new" ? "New Lease" : "Renewal",
+      isCommercial,
     });
   };
 
@@ -353,7 +354,7 @@ export default function RentCalculator() {
                               <div className="text-xs text-muted-foreground">{fee.description}</div>
                             </td>
                             <td className="py-2.5 px-3 text-right font-semibold tabular-nums">
-                              {formatAED(fee.amount)}
+                              {formatAED(isCommercial ? fee.amountCommercial : fee.amountResidential)}
                             </td>
                           </tr>
                         ))}
