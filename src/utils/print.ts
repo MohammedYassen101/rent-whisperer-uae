@@ -11,7 +11,7 @@ interface PrintData {
   annualRent: number;
   monthlyRent: number;
   vatAmount: number;
-  securityDeposit: number;
+  
   numPayments: number;
   schedule: PaymentScheduleItem[];
   fees: Fee[];
@@ -123,10 +123,6 @@ export function printReceipt(data: PrintData): void {
           <div class="summary-card">
             <div class="label">Monthly Rent</div>
             <div class="value">${formatAED(data.monthlyRent)}</div>
-          </div>
-          <div class="summary-card">
-            <div class="label">Security Deposit</div>
-            <div class="value">${formatAED(data.securityDeposit)}</div>
           </div>
         </div>
         ${

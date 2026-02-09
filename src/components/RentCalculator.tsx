@@ -23,7 +23,6 @@ export default function RentCalculator() {
   const [buildingId, setBuildingId] = useState("");
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
-  const [securityDeposit, setSecurityDeposit] = useState<number>(0);
   const [numPayments, setNumPayments] = useState<string>("4");
   const [leaseStartDate, setLeaseStartDate] = useState("");
   const [results, setResults] = useState<{
@@ -42,14 +41,12 @@ export default function RentCalculator() {
   useEffect(() => {
     if (selectedUnit) {
       setAnnualRent(applyRentIncrease(selectedUnit.annualRent));
-      setSecurityDeposit(selectedUnit.securityDeposit);
     }
   }, [selectedUnit]);
 
   useEffect(() => {
     setUnitId("");
     setAnnualRent(0);
-    setSecurityDeposit(0);
     setResults(null);
   }, [buildingId]);
 
@@ -76,7 +73,7 @@ export default function RentCalculator() {
     }
 
     const isCommercial = selectedUnit ? isCommercialUnit(selectedUnit.type) : false;
-    const calculation = calculateRent(annualRent, parseInt(numPayments), securityDeposit, isCommercial);
+    const calculation = calculateRent(annualRent, parseInt(numPayments), isCommercial);
     const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
 
     setResults({ calculation, schedule });
@@ -111,7 +108,6 @@ export default function RentCalculator() {
       annualRent: results.calculation.annualRent,
       monthlyRent: results.calculation.monthlyRent,
       vatAmount: results.calculation.vatAmount,
-      securityDeposit: results.calculation.securityDeposit,
       numPayments: results.calculation.numPayments,
       schedule: results.schedule,
       fees,
@@ -214,7 +210,7 @@ export default function RentCalculator() {
 
             <Separator />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div>
               <div className="space-y-2">
                 <Label htmlFor="annualRent">Annual Rent (AED) *</Label>
                 <Input
@@ -223,16 +219,6 @@ export default function RentCalculator() {
                   min={0}
                   value={annualRent || ""}
                   onChange={(e) => setAnnualRent(parseFloat(e.target.value) || 0)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="deposit">Security Deposit</Label>
-                <Input
-                  id="deposit"
-                  type="number"
-                  min={0}
-                  value={securityDeposit || ""}
-                  onChange={(e) => setSecurityDeposit(parseFloat(e.target.value) || 0)}
                 />
               </div>
             </div>
@@ -286,11 +272,6 @@ export default function RentCalculator() {
                   label="Monthly Rent"
                   value={formatAED(results.calculation.monthlyRent)}
                   icon={<Calendar className="w-4 h-4" />}
-                />
-                <SummaryCard
-                  label="Security Deposit"
-                  value={formatAED(results.calculation.securityDeposit)}
-                  icon={<FileText className="w-4 h-4" />}
                 />
                 {results.calculation.isCommercial && (
                   <SummaryCard

@@ -4,7 +4,6 @@ import { PaymentScheduleItem, RentCalculation } from "@/types/rent";
 export function calculateRent(
   annualRent: number,
   numPayments: number,
-  securityDeposit: number,
   isCommercial: boolean
 ): RentCalculation {
   const vatRate = isCommercial ? 0.05 : 0;
@@ -21,7 +20,6 @@ export function calculateRent(
     firstPayment,
     subsequentPayments: paymentAmount,
     numPayments,
-    securityDeposit,
     isCommercial,
   };
 }

@@ -13,7 +13,6 @@ export interface Unit {
   type: UnitType;
   area?: number;
   annualRent: number;
-  securityDeposit: number;
 }
 
 export interface Fee {
@@ -33,7 +32,6 @@ export interface RentCalculation {
   firstPayment: number;
   subsequentPayments: number;
   numPayments: number;
-  securityDeposit: number;
   isCommercial: boolean;
 }
 
