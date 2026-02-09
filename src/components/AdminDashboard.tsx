@@ -66,11 +66,31 @@ export default function AdminDashboard() {
     return <div className="container mx-auto px-4 py-12 text-center text-muted-foreground">Loading dashboard...</div>;
   }
 
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+
   const totalVisits = records.reduce((sum, r) => sum + r.visitCount, 0);
   const avgRating = feedback.length > 0
     ? (feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length).toFixed(1)
     : "N/A";
   const pendingMaintenance = requests.filter((r) => r.status === "pending").length;
+
+  // Monthly stats
+  const monthlyVisitors = records.filter((r) => new Date(r.lastVisit) >= startOfMonth).length;
+  const monthlyMaintenance = requests.filter((r) => new Date(r.submittedAt) >= startOfMonth).length;
+  const monthlyFeedback = feedback.filter((f) => new Date(f.submittedAt) >= startOfMonth).length;
+  const monthlyVisits = records
+    .filter((r) => new Date(r.lastVisit) >= startOfMonth)
+    .reduce((sum, r) => sum + r.visitCount, 0);
+
+  // Yearly stats
+  const yearlyVisitors = records.filter((r) => new Date(r.lastVisit) >= startOfYear).length;
+  const yearlyMaintenance = requests.filter((r) => new Date(r.submittedAt) >= startOfYear).length;
+  const yearlyFeedback = feedback.filter((f) => new Date(f.submittedAt) >= startOfYear).length;
+  const yearlyVisits = records
+    .filter((r) => new Date(r.lastVisit) >= startOfYear)
+    .reduce((sum, r) => sum + r.visitCount, 0);
 
   return (
     <main className="container mx-auto px-4 py-8 md:py-12 space-y-8">
@@ -90,6 +110,43 @@ export default function AdminDashboard() {
         <StatCard icon={<Eye className="w-5 h-5" />} label="Total Visits" value={totalVisits.toString()} />
         <StatCard icon={<Star className="w-5 h-5" />} label="Avg. Rating" value={avgRating} />
         <StatCard icon={<Wrench className="w-5 h-5" />} label="Pending Maintenance" value={pendingMaintenance.toString()} highlight={pendingMaintenance > 0} />
+      </div>
+
+      {/* Monthly & Yearly Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up">
+        <Card className="shadow-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Calendar className="w-5 h-5 text-primary" />
+              This Month — {format(now, "MMMM yyyy")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <MiniStat label="Active Users" value={monthlyVisitors} />
+              <MiniStat label="Total Visits" value={monthlyVisits} />
+              <MiniStat label="Maintenance Req." value={monthlyMaintenance} />
+              <MiniStat label="Feedback" value={monthlyFeedback} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              This Year — {now.getFullYear()}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <MiniStat label="Active Users" value={yearlyVisitors} />
+              <MiniStat label="Total Visits" value={yearlyVisits} />
+              <MiniStat label="Maintenance Req." value={yearlyMaintenance} />
+              <MiniStat label="Feedback" value={yearlyFeedback} />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Rent Increase Toggle */}
@@ -289,4 +346,13 @@ function StatusBadge({ status }: { status: string }) {
     completed: "bg-success/10 text-success",
   };
   return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${variants[status] || ""}`}>{status}</span>;
+}
+
+function MiniStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="text-center p-3 rounded-lg bg-secondary/50">
+      <p className="text-2xl font-display font-bold text-foreground">{value}</p>
+      <p className="text-xs text-muted-foreground font-medium mt-1">{label}</p>
+    </div>
+  );
 }
