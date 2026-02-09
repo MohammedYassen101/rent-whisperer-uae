@@ -16,7 +16,7 @@ export default function FeedbackForm() {
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = feedbackSchema.safeParse({
       tenantName,
@@ -30,13 +30,16 @@ export default function FeedbackForm() {
       return;
     }
 
-    saveFeedback(result.data as Required<typeof result.data>);
-
-    toast.success("Thank you for your feedback!");
-    setTenantName("");
-    setCompanyName("");
-    setRating(0);
-    setComment("");
+    try {
+      await saveFeedback(result.data as Required<typeof result.data>);
+      toast.success("Thank you for your feedback!");
+      setTenantName("");
+      setCompanyName("");
+      setRating(0);
+      setComment("");
+    } catch {
+      toast.error("Failed to submit feedback. Please try again.");
+    }
   };
 
   return (

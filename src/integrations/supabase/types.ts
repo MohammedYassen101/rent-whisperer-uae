@@ -14,16 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          comment: string | null
+          company_name: string | null
+          id: string
+          rating: number
+          submitted_at: string
+          tenant_name: string
+        }
+        Insert: {
+          comment?: string | null
+          company_name?: string | null
+          id?: string
+          rating: number
+          submitted_at?: string
+          tenant_name: string
+        }
+        Update: {
+          comment?: string | null
+          company_name?: string | null
+          id?: string
+          rating?: number
+          submitted_at?: string
+          tenant_name?: string
+        }
+        Relationships: []
+      }
+      maintenance_requests: {
+        Row: {
+          building: string
+          company_name: string | null
+          description: string
+          id: string
+          priority: string
+          status: string
+          submitted_at: string
+          tenant_name: string
+          unit_number: string
+        }
+        Insert: {
+          building: string
+          company_name?: string | null
+          description: string
+          id?: string
+          priority?: string
+          status?: string
+          submitted_at?: string
+          tenant_name: string
+          unit_number: string
+        }
+        Update: {
+          building?: string
+          company_name?: string | null
+          description?: string
+          id?: string
+          priority?: string
+          status?: string
+          submitted_at?: string
+          tenant_name?: string
+          unit_number?: string
+        }
+        Relationships: []
+      }
+      tenant_records: {
+        Row: {
+          annual_rent: number
+          building_name: string
+          calculated_at: string
+          company_name: string | null
+          id: string
+          last_visit: string
+          tenant_name: string
+          unit_number: string
+          unit_type: string
+          visit_count: number
+        }
+        Insert: {
+          annual_rent?: number
+          building_name: string
+          calculated_at?: string
+          company_name?: string | null
+          id?: string
+          last_visit?: string
+          tenant_name: string
+          unit_number: string
+          unit_type: string
+          visit_count?: number
+        }
+        Update: {
+          annual_rent?: number
+          building_name?: string
+          calculated_at?: string
+          company_name?: string | null
+          id?: string
+          last_visit?: string
+          tenant_name?: string
+          unit_number?: string
+          unit_type?: string
+          visit_count?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +290,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

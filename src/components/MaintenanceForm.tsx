@@ -20,7 +20,7 @@ export default function MaintenanceForm() {
   const [priority, setPriority] = useState<string>("medium");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const result = maintenanceRequestSchema.safeParse({
@@ -37,10 +37,13 @@ export default function MaintenanceForm() {
       return;
     }
 
-    saveMaintenanceRequest(result.data as Required<typeof result.data>);
-
-    toast.success("Maintenance request submitted successfully!");
-    setSubmitted(true);
+    try {
+      await saveMaintenanceRequest(result.data as Required<typeof result.data>);
+      toast.success("Maintenance request submitted successfully!");
+      setSubmitted(true);
+    } catch {
+      toast.error("Failed to submit request. Please try again.");
+    }
   };
 
   const handleReset = () => {

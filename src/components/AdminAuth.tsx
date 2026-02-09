@@ -1,65 +1,34 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
-const ADMIN_SESSION_KEY = "alyassia_admin_session";
-const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
-
-export function isAdminAuthenticated(): boolean {
-  try {
-    const session = localStorage.getItem(ADMIN_SESSION_KEY);
-    if (!session) return false;
-    const { expiresAt } = JSON.parse(session);
-    if (Date.now() > expiresAt) {
-      localStorage.removeItem(ADMIN_SESSION_KEY);
-      return false;
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function setAdminSession() {
-  localStorage.setItem(
-    ADMIN_SESSION_KEY,
-    JSON.stringify({ expiresAt: Date.now() + SESSION_DURATION })
-  );
-}
-
-export function clearAdminSession() {
-  localStorage.removeItem(ADMIN_SESSION_KEY);
-}
-
-interface AdminAuthProps {
-  onAuthenticated: () => void;
-}
-
-export default function AdminAuth({ onAuthenticated }: AdminAuthProps) {
+export default function AdminAuth() {
+  const { signIn, signUp } = useAuth();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [attempts, setAttempts] = useState(0);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setLoading(true);
 
-    if (attempts >= 5) {
-      setError("Too many attempts. Please try again later.");
-      return;
-    }
+    const { error } = isSignUp
+      ? await signUp(email, password)
+      : await signIn(email, password);
 
-    // Simple hash check — not cryptographically secure but better than plaintext
-    const hash = Array.from(password).reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
-    if (hash === 1454268421) {
-      setAdminSession();
-      onAuthenticated();
-    } else {
-      setAttempts((a) => a + 1);
-      setError("Incorrect password. Please try again.");
-      setPassword("");
+    setLoading(false);
+
+    if (error) {
+      toast.error(error);
+    } else if (isSignUp) {
+      toast.success("Account created! Check your email to verify, then sign in.");
+      setIsSignUp(false);
     }
   };
 
@@ -70,24 +39,54 @@ export default function AdminAuth({ onAuthenticated }: AdminAuthProps) {
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
             <Lock className="w-6 h-6 text-primary" />
           </div>
-          <CardTitle>Admin Access</CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">Enter the admin password to continue.</p>
+          <CardTitle>{isSignUp ? "Create Admin Account" : "Admin Sign In"}</CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            {isSignUp ? "Create your admin account." : "Sign in to access the admin dashboard."}
+          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              maxLength={50}
-              autoFocus
-            />
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={!password || attempts >= 5}>
-              Sign In
+            <div className="space-y-2">
+              <Label htmlFor="admin-email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="admin-email"
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-password">Password</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              className="text-sm text-primary hover:underline"
+              onClick={() => setIsSignUp(!isSignUp)}
+            >
+              {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>
