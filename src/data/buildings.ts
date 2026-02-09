@@ -26,13 +26,14 @@ export const units: Unit[] = [
   { id: "p164-m104", buildingId: "plot-164", unitNumber: "M104", type: "Office", area: 45, annualRent: 32000 },
   { id: "p164-m105", buildingId: "plot-164", unitNumber: "M105", type: "Office", area: 45, annualRent: 75000 },
   { id: "p164-m106", buildingId: "plot-164", unitNumber: "M106", type: "Office", area: 64, annualRent: 75000 },
-  { id: "p164-m107", buildingId: "plot-164", unitNumber: "M107", type: "Office", area: 84, annualRent: 48300 },
+  { id: "p164-m107", buildingId: "plot-164", unitNumber: "M107", type: "Office", area: 84, annualRent: 50584 },
   { id: "p164-m108", buildingId: "plot-164", unitNumber: "M108", type: "Office", area: 69, annualRent: 44100 },
   { id: "p164-m201-m202", buildingId: "plot-164", unitNumber: "M201 & M202", type: "Office", area: 153, annualRent: 55000 },
   { id: "p164-m203", buildingId: "plot-164", unitNumber: "M203", type: "Office", area: 84, annualRent: 48000 },
   { id: "p164-m204", buildingId: "plot-164", unitNumber: "M204", type: "Office", area: 69, annualRent: 40000 },
   { id: "p164-m205-m206", buildingId: "plot-164", unitNumber: "M205 & M206", type: "Office", area: 153, annualRent: 86000 },
   { id: "p164-m207", buildingId: "plot-164", unitNumber: "M207", type: "Office", area: 84, annualRent: 48300 },
+  { id: "p164-m208", buildingId: "plot-164", unitNumber: "M208", type: "Office", area: 69, annualRent: 14000 },
 
   // Plot 164 - Residential
   { id: "p164-t301", buildingId: "plot-164", unitNumber: "T301", type: "1 BR", area: 82, annualRent: 32550 },
