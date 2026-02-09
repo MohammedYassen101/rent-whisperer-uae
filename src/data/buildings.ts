@@ -4,22 +4,89 @@ export const buildings: Building[] = [
   { id: "plot-125", name: "Plot 125", location: "Al Ain" },
   { id: "plot-127", name: "Plot 127", location: "Al Ain" },
   { id: "plot-164", name: "Plot 164", location: "Al Ain" },
+  { id: "plot-185", name: "Plot 185", location: "Al Ain" },
   { id: "plot-211", name: "Plot 211", location: "Al Ain" },
   { id: "plot-14", name: "Plot 14", location: "Al Ain" },
 ];
 
 export const units: Unit[] = [
-  // Plot 125
+  // ── Plot 125 ── Residential
+  { id: "p125-f001", buildingId: "plot-125", unitNumber: "Flat 001", type: "1 BR", annualRent: 0 },
+  { id: "p125-f002", buildingId: "plot-125", unitNumber: "Flat 002", type: "Office", annualRent: 0 },
+  { id: "p125-f003", buildingId: "plot-125", unitNumber: "Flat 003", type: "Office", annualRent: 0 },
+  { id: "p125-f004", buildingId: "plot-125", unitNumber: "Flat 004", type: "1 BR", annualRent: 0 },
+  { id: "p125-f005", buildingId: "plot-125", unitNumber: "Flat 005", type: "1 BR", annualRent: 0 },
+  { id: "p125-f006", buildingId: "plot-125", unitNumber: "Flat 006", type: "Studio", annualRent: 0 },
+  { id: "p125-f007", buildingId: "plot-125", unitNumber: "Flat 007", type: "1 BR", annualRent: 0 },
+  { id: "p125-f008", buildingId: "plot-125", unitNumber: "Flat 008", type: "1 BR", annualRent: 0 },
   { id: "p125-f009", buildingId: "plot-125", unitNumber: "Flat 009", type: "1 BR", annualRent: 25000 },
   { id: "p125-f010", buildingId: "plot-125", unitNumber: "Flat 010", type: "1 BR", annualRent: 27000 },
+  { id: "p125-f011", buildingId: "plot-125", unitNumber: "Flat 011", type: "1 BR", annualRent: 0 },
+  { id: "p125-f012", buildingId: "plot-125", unitNumber: "Flat 012", type: "1 BR", annualRent: 0 },
+  { id: "p125-f013", buildingId: "plot-125", unitNumber: "Flat 013", type: "1 BR", annualRent: 0 },
+  { id: "p125-f014", buildingId: "plot-125", unitNumber: "Flat 014", type: "1 BR", annualRent: 0 },
+  { id: "p125-f015", buildingId: "plot-125", unitNumber: "Flat 015", type: "1 BR", annualRent: 0 },
+  { id: "p125-f016", buildingId: "plot-125", unitNumber: "Flat 016", type: "1 BR", annualRent: 0 },
+  { id: "p125-f017", buildingId: "plot-125", unitNumber: "Flat 017", type: "1 BR", annualRent: 0 },
   { id: "p125-f018", buildingId: "plot-125", unitNumber: "Flat 018", type: "1 BR", area: 54.87, annualRent: 25000 },
+  { id: "p125-f019", buildingId: "plot-125", unitNumber: "Flat 019", type: "1 BR", annualRent: 0 },
+  { id: "p125-f020", buildingId: "plot-125", unitNumber: "Flat 020", type: "1 BR", annualRent: 0 },
+  { id: "p125-f021", buildingId: "plot-125", unitNumber: "Flat 021", type: "Studio", annualRent: 0 },
+  { id: "p125-f022", buildingId: "plot-125", unitNumber: "Flat 022", type: "1 BR", annualRent: 0 },
+  { id: "p125-f023", buildingId: "plot-125", unitNumber: "Flat 023", type: "1 BR", annualRent: 0 },
+  { id: "p125-f024", buildingId: "plot-125", unitNumber: "Flat 024", type: "Studio", annualRent: 0 },
+  // ── Plot 125 ── Commercial
+  { id: "p125-s001", buildingId: "plot-125", unitNumber: "Shop 001", type: "Shop", annualRent: 0 },
+  { id: "p125-s002", buildingId: "plot-125", unitNumber: "Shop 002", type: "Shop", annualRent: 0 },
+  { id: "p125-s003", buildingId: "plot-125", unitNumber: "Shop 003", type: "Shop", annualRent: 0 },
+  { id: "p125-s004", buildingId: "plot-125", unitNumber: "Shop 004", type: "Shop", annualRent: 0 },
+  { id: "p125-s005-006", buildingId: "plot-125", unitNumber: "Shop 005+006", type: "Shop", annualRent: 0 },
+  { id: "p125-s007", buildingId: "plot-125", unitNumber: "Shop 007", type: "Shop", annualRent: 0 },
+  { id: "p125-s008", buildingId: "plot-125", unitNumber: "Shop 008", type: "Shop", annualRent: 0 },
+  { id: "p125-s009", buildingId: "plot-125", unitNumber: "Shop 009", type: "Shop", annualRent: 0 },
+  { id: "p125-bs11", buildingId: "plot-125", unitNumber: "Basement Shop 11", type: "Shop", annualRent: 0 },
+  { id: "p125-bs12", buildingId: "plot-125", unitNumber: "Basement Shop 12", type: "Shop", annualRent: 0 },
+  { id: "p125-o1", buildingId: "plot-125", unitNumber: "Office 1", type: "Office", annualRent: 0 },
+  { id: "p125-o2", buildingId: "plot-125", unitNumber: "Office 2", type: "Office", annualRent: 0 },
+  { id: "p125-o3", buildingId: "plot-125", unitNumber: "Office 3", type: "Office", annualRent: 0 },
 
-  // Plot 127
-  { id: "p127-o001", buildingId: "plot-127", unitNumber: "Office 1", type: "Office", annualRent: 30000 },
+  // ── Plot 127 ── Residential
+  { id: "p127-f001", buildingId: "plot-127", unitNumber: "Flat 001", type: "1 BR", annualRent: 0 },
+  { id: "p127-f002", buildingId: "plot-127", unitNumber: "Flat 002", type: "1 BR", annualRent: 0 },
+  { id: "p127-f003", buildingId: "plot-127", unitNumber: "Flat 003", type: "1 BR", annualRent: 0 },
+  { id: "p127-f004", buildingId: "plot-127", unitNumber: "Flat 004", type: "1 BR", annualRent: 0 },
+  { id: "p127-f005", buildingId: "plot-127", unitNumber: "Flat 005", type: "1 BR", annualRent: 0 },
+  { id: "p127-f006", buildingId: "plot-127", unitNumber: "Flat 006", type: "Studio", annualRent: 0 },
+  { id: "p127-f007", buildingId: "plot-127", unitNumber: "Flat 007", type: "1 BR", annualRent: 0 },
   { id: "p127-f008", buildingId: "plot-127", unitNumber: "Flat 008", type: "1 BR", annualRent: 27000 },
+  { id: "p127-f009", buildingId: "plot-127", unitNumber: "Flat 009", type: "1 BR", annualRent: 0 },
+  { id: "p127-f010", buildingId: "plot-127", unitNumber: "Flat 010", type: "1 BR", annualRent: 0 },
+  { id: "p127-f011", buildingId: "plot-127", unitNumber: "Flat 011", type: "1 BR", annualRent: 0 },
+  { id: "p127-f012", buildingId: "plot-127", unitNumber: "Flat 012", type: "1 BR", annualRent: 0 },
+  { id: "p127-f013", buildingId: "plot-127", unitNumber: "Flat 013", type: "1 BR", annualRent: 0 },
+  { id: "p127-f014", buildingId: "plot-127", unitNumber: "Flat 014", type: "1 BR", annualRent: 0 },
+  { id: "p127-f015", buildingId: "plot-127", unitNumber: "Flat 015", type: "1 BR", annualRent: 0 },
+  { id: "p127-f016", buildingId: "plot-127", unitNumber: "Flat 016", type: "1 BR", annualRent: 0 },
+  { id: "p127-f017", buildingId: "plot-127", unitNumber: "Flat 017", type: "1 BR", annualRent: 0 },
   { id: "p127-f018", buildingId: "plot-127", unitNumber: "Flat 018", type: "1 BR", area: 54.87, annualRent: 25000 },
+  { id: "p127-f019", buildingId: "plot-127", unitNumber: "Flat 019", type: "1 BR", annualRent: 0 },
+  { id: "p127-f020", buildingId: "plot-127", unitNumber: "Flat 020", type: "1 BR", annualRent: 0 },
+  { id: "p127-f021", buildingId: "plot-127", unitNumber: "Flat 021", type: "Studio", annualRent: 0 },
+  { id: "p127-f022", buildingId: "plot-127", unitNumber: "Flat 022", type: "1 BR", annualRent: 0 },
+  { id: "p127-f023", buildingId: "plot-127", unitNumber: "Flat 023", type: "1 BR", annualRent: 0 },
+  { id: "p127-f024", buildingId: "plot-127", unitNumber: "Flat 024", type: "Studio", annualRent: 0 },
+  // ── Plot 127 ── Commercial
+  { id: "p127-s001", buildingId: "plot-127", unitNumber: "Shop 001", type: "Shop", annualRent: 0 },
+  { id: "p127-s005-006", buildingId: "plot-127", unitNumber: "Shop 005, 006", type: "Shop", annualRent: 0 },
+  { id: "p127-s007", buildingId: "plot-127", unitNumber: "Shop 007", type: "Shop", annualRent: 0 },
+  { id: "p127-s008", buildingId: "plot-127", unitNumber: "Shop 008", type: "Shop", annualRent: 0 },
+  { id: "p127-s009", buildingId: "plot-127", unitNumber: "Shop 009", type: "Shop", annualRent: 0 },
+  { id: "p127-bs1", buildingId: "plot-127", unitNumber: "Basement Shop 1", type: "Shop", annualRent: 0 },
+  { id: "p127-o1", buildingId: "plot-127", unitNumber: "Office 1", type: "Office", annualRent: 30000 },
+  { id: "p127-o2", buildingId: "plot-127", unitNumber: "Office 2", type: "Office", annualRent: 0 },
+  { id: "p127-o3", buildingId: "plot-127", unitNumber: "Office 3", type: "Office", annualRent: 0 },
 
-  // Plot 164 - Offices
+  // ── Plot 164 ── Offices
   { id: "p164-m101", buildingId: "plot-164", unitNumber: "M101", type: "Office", area: 69, annualRent: 47250 },
   { id: "p164-m102", buildingId: "plot-164", unitNumber: "M102", type: "Office", area: 84, annualRent: 51250 },
   { id: "p164-m103", buildingId: "plot-164", unitNumber: "M103", type: "Office", area: 64, annualRent: 43000 },
@@ -34,8 +101,7 @@ export const units: Unit[] = [
   { id: "p164-m205-m206", buildingId: "plot-164", unitNumber: "M205 & M206", type: "Office", area: 153, annualRent: 86000 },
   { id: "p164-m207", buildingId: "plot-164", unitNumber: "M207", type: "Office", area: 84, annualRent: 48300 },
   { id: "p164-m208", buildingId: "plot-164", unitNumber: "M208", type: "Office", area: 69, annualRent: 14000 },
-
-  // Plot 164 - Residential
+  // ── Plot 164 ── Residential
   { id: "p164-t301", buildingId: "plot-164", unitNumber: "T301", type: "1 BR", area: 82, annualRent: 32550 },
   { id: "p164-t302", buildingId: "plot-164", unitNumber: "T302", type: "2 BR", area: 121, annualRent: 43100 },
   { id: "p164-t303", buildingId: "plot-164", unitNumber: "T303", type: "2 BR", area: 121, annualRent: 43100 },
@@ -52,29 +118,52 @@ export const units: Unit[] = [
   { id: "p164-t406", buildingId: "plot-164", unitNumber: "T406", type: "2 BR", area: 121, annualRent: 40000 },
   { id: "p164-t407", buildingId: "plot-164", unitNumber: "T407", type: "2 BR", area: 121, annualRent: 43100 },
   { id: "p164-t408", buildingId: "plot-164", unitNumber: "T408", type: "1 BR", area: 82, annualRent: 32550 },
-
-  // Plot 164 - Showrooms
+  // ── Plot 164 ── Showrooms
   { id: "p164-front-showroom", buildingId: "plot-164", unitNumber: "Front Showroom", type: "Showroom", area: 765.34, annualRent: 525000 },
   { id: "p164-back-showroom-1", buildingId: "plot-164", unitNumber: "Back Showroom No-1", type: "Showroom", area: 313, annualRent: 180000 },
   { id: "p164-back-showroom-2", buildingId: "plot-164", unitNumber: "Back Showroom No-2", type: "Showroom", area: 109.44, annualRent: 178500 },
 
-  // Plot 211 - Offices
+  // ── Plot 185 ── Offices
+  { id: "p185-m1-101", buildingId: "plot-185", unitNumber: "M1-101", type: "Office", annualRent: 0 },
+  { id: "p185-m1-102", buildingId: "plot-185", unitNumber: "M1-102", type: "Office", annualRent: 0 },
+  { id: "p185-m1-103", buildingId: "plot-185", unitNumber: "M1-103", type: "Office", annualRent: 0 },
+  { id: "p185-m2-201", buildingId: "plot-185", unitNumber: "M2-201", type: "Office", annualRent: 0 },
+  { id: "p185-m2-202", buildingId: "plot-185", unitNumber: "M2-202", type: "Office", annualRent: 0 },
+  { id: "p185-m2-203", buildingId: "plot-185", unitNumber: "M2-203", type: "Office", annualRent: 0 },
+  { id: "p185-m2-204", buildingId: "plot-185", unitNumber: "M2-204", type: "Office", annualRent: 0 },
+  { id: "p185-m2-205", buildingId: "plot-185", unitNumber: "M2-205", type: "Office", annualRent: 0 },
+  { id: "p185-m2-206", buildingId: "plot-185", unitNumber: "M2-206", type: "Office", annualRent: 0 },
+  // ── Plot 185 ── Residential
+  { id: "p185-301", buildingId: "plot-185", unitNumber: "301", type: "1 BR", annualRent: 0 },
+  { id: "p185-302", buildingId: "plot-185", unitNumber: "302", type: "1 BR", annualRent: 0 },
+  { id: "p185-303", buildingId: "plot-185", unitNumber: "303", type: "1 BR", annualRent: 0 },
+  { id: "p185-304", buildingId: "plot-185", unitNumber: "304", type: "1 BR", annualRent: 0 },
+  { id: "p185-305", buildingId: "plot-185", unitNumber: "305", type: "1 BR", annualRent: 0 },
+  { id: "p185-306", buildingId: "plot-185", unitNumber: "306", type: "1 BR", annualRent: 0 },
+  { id: "p185-401", buildingId: "plot-185", unitNumber: "401", type: "1 BR", annualRent: 0 },
+  { id: "p185-402", buildingId: "plot-185", unitNumber: "402", type: "1 BR", annualRent: 0 },
+  { id: "p185-403", buildingId: "plot-185", unitNumber: "403", type: "1 BR", annualRent: 0 },
+  { id: "p185-404", buildingId: "plot-185", unitNumber: "404", type: "1 BR", annualRent: 0 },
+  { id: "p185-405", buildingId: "plot-185", unitNumber: "405", type: "1 BR", annualRent: 0 },
+  { id: "p185-406", buildingId: "plot-185", unitNumber: "406", type: "1 BR", annualRent: 0 },
+  // ── Plot 185 ── Showroom
+  { id: "p185-showroom", buildingId: "plot-185", unitNumber: "Showroom", type: "Showroom", annualRent: 0 },
+
+  // ── Plot 211 ── Offices
   { id: "p211-m101-104", buildingId: "plot-211", unitNumber: "M-101, 102, 103 & 104", type: "Office", area: 267.92, annualRent: 175000 },
   { id: "p211-m201", buildingId: "plot-211", unitNumber: "M-201", type: "Office", area: 65.77, annualRent: 35000 },
   { id: "p211-m202", buildingId: "plot-211", unitNumber: "M-202", type: "Office", area: 65.77, annualRent: 38750 },
   { id: "p211-m203", buildingId: "plot-211", unitNumber: "M-203", type: "Office", area: 68.19, annualRent: 38000 },
   { id: "p211-m204", buildingId: "plot-211", unitNumber: "M-204", type: "Office", area: 68.19, annualRent: 36750 },
-
-  // Plot 211 - Residential
+  // ── Plot 211 ── Residential
   { id: "p211-t101", buildingId: "plot-211", unitNumber: "T-101", type: "3 BR", area: 185, annualRent: 55000 },
   { id: "p211-t102", buildingId: "plot-211", unitNumber: "T-102", type: "3 BR", area: 185, annualRent: 54600 },
   { id: "p211-t201", buildingId: "plot-211", unitNumber: "T-201", type: "3 BR", area: 185, annualRent: 65000 },
   { id: "p211-t202", buildingId: "plot-211", unitNumber: "T-202", type: "3 BR", area: 185, annualRent: 55000 },
-
-  // Plot 211 - Showroom
+  // ── Plot 211 ── Showroom
   { id: "p211-basement-showroom", buildingId: "plot-211", unitNumber: "Basement & Showroom", type: "Showroom", area: 495.5, annualRent: 460000 },
 
-  // Plot 14 - Villas
+  // ── Plot 14 ── Villas
   { id: "p14-villa-1", buildingId: "plot-14", unitNumber: "Villa 1", type: "Villa", annualRent: 24000 },
   { id: "p14-villa-2", buildingId: "plot-14", unitNumber: "Villa 2", type: "Villa", annualRent: 36750 },
   { id: "p14-villa-3", buildingId: "plot-14", unitNumber: "Villa 3", type: "Villa", annualRent: 36750 },
@@ -82,7 +171,7 @@ export const units: Unit[] = [
 ];
 
 export function isCommercialUnit(type: string): boolean {
-  return ["Office", "Showroom"].includes(type);
+  return ["Office", "Showroom", "Shop"].includes(type);
 }
 
 export function getUnitsByBuilding(buildingId: string): Unit[] {
