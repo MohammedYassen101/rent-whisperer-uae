@@ -25,7 +25,10 @@ export async function getMaintenanceRequests() {
     .from("maintenance_requests")
     .select("*")
     .order("submitted_at", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    console.error("getMaintenanceRequests error:", error);
+    throw error;
+  }
   return (data ?? []).map((r) => ({
     id: r.id,
     tenantName: r.tenant_name,
@@ -68,7 +71,10 @@ export async function getFeedback() {
     .from("feedback")
     .select("*")
     .order("submitted_at", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    console.error("getFeedback error:", error);
+    throw error;
+  }
   return (data ?? []).map((f) => ({
     id: f.id,
     tenantName: f.tenant_name,
@@ -125,7 +131,10 @@ export async function getTenantRecords() {
     .from("tenant_records")
     .select("*")
     .order("last_visit", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    console.error("getTenantRecords error:", error);
+    throw error;
+  }
   return (data ?? []).map((r) => ({
     id: r.id,
     tenantName: r.tenant_name,
