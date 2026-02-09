@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -15,47 +16,48 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import AdminTrendsChart from "@/components/AdminTrendsChart";
+import AdminDashboardSkeleton from "@/components/AdminDashboardSkeleton";
 
 export default function AdminDashboard() {
   const { signOut } = useAuth();
-  const [records, setRecords] = useState<TenantRecord[]>([]);
-  const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
-  const [feedback, setFeedback] = useState<TenantFeedback[]>([]);
-  const [rentIncreaseEnabled, setRentIncreaseEnabled] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const { data: records = [], isLoading: loadingRecords } = useQuery({
+    queryKey: ["admin-records"],
+    queryFn: getTenantRecords,
+    staleTime: 60_000,
+  });
 
-  const loadData = async () => {
-    try {
-      const [recs, reqs, fb, ri] = await Promise.all([
-        getTenantRecords(),
-        getMaintenanceRequests(),
-        getFeedback(),
-        getRentIncrease(),
-      ]);
-      setRecords(recs);
-      setRequests(reqs);
-      setFeedback(fb);
-      setRentIncreaseEnabled(ri.enabled);
-    } catch (err) {
-      toast.error("Failed to load data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: requests = [], isLoading: loadingRequests } = useQuery({
+    queryKey: ["admin-requests"],
+    queryFn: getMaintenanceRequests,
+    staleTime: 60_000,
+  });
+
+  const { data: feedback = [], isLoading: loadingFeedback } = useQuery({
+    queryKey: ["admin-feedback"],
+    queryFn: getFeedback,
+    staleTime: 60_000,
+  });
+
+  const { data: rentIncreaseData, isLoading: loadingRentIncrease } = useQuery({
+    queryKey: ["admin-rent-increase"],
+    queryFn: getRentIncrease,
+    staleTime: 60_000,
+  });
+
+  const rentIncreaseEnabled = rentIncreaseData?.enabled ?? false;
+  const loading = loadingRecords || loadingRequests || loadingFeedback || loadingRentIncrease;
 
   const handleRentIncreaseToggle = async (enabled: boolean) => {
-    setRentIncreaseEnabled(enabled);
     await setRentIncrease(enabled);
+    queryClient.invalidateQueries({ queryKey: ["admin-rent-increase"] });
     toast.success(enabled ? "5% rent increase activated" : "Rent increase deactivated");
   };
 
   const handleMaintenanceStatusChange = async (id: string, status: MaintenanceRequest["status"]) => {
     await updateMaintenanceStatus(id, status);
-    setRequests(await getMaintenanceRequests());
+    queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
     toast.success(`Request marked as ${status}`);
   };
 
@@ -119,7 +121,7 @@ export default function AdminDashboard() {
   };
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-12 text-center text-muted-foreground">Loading dashboard...</div>;
+    return <AdminDashboardSkeleton />;
   }
 
   const now = new Date();

@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import AdminAuth from "@/components/AdminAuth";
 import { useAuth } from "@/hooks/useAuth";
 import AdminDashboard from "@/components/AdminDashboard";
+import AdminDashboardSkeleton from "@/components/AdminDashboardSkeleton";
 
 export default function Admin() {
   const { user, isAdmin, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <AdminDashboardSkeleton />
       </div>
     );
   }
