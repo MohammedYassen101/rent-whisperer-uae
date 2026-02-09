@@ -10,7 +10,7 @@ import { Calculator, Printer, Building2, DollarSign, Calendar, FileText } from "
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
-import { applyRentIncrease, saveTenantRecord } from "@/utils/storage";
+import { saveTenantRecord } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
 import { RentCalculation, PaymentScheduleItem } from "@/types/rent";
 import { addMonths, format } from "date-fns";
@@ -46,7 +46,8 @@ export default function RentCalculator() {
 
   useEffect(() => {
     if (selectedUnit) {
-      applyRentIncrease(selectedUnit.annualRent).then(setAnnualRent);
+      // Always apply mandatory 5% increase on the unit's base rent
+      setAnnualRent(Math.round(selectedUnit.annualRent * 1.05 * 100) / 100);
     }
   }, [selectedUnit]);
 
@@ -247,6 +248,11 @@ export default function RentCalculator() {
                   value={annualRent || ""}
                   onChange={(e) => setAnnualRent(parseFloat(e.target.value) || 0)}
                 />
+                {selectedUnit && selectedUnit.annualRent > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Base rent: {selectedUnit.annualRent.toLocaleString()} AED → with 5% increase: {annualRent.toLocaleString()} AED
+                  </p>
+                )}
               </div>
             </div>
 
