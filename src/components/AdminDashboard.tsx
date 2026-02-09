@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Users, Eye, Star, Wrench, TrendingUp, Calendar,
-  AlertCircle, CheckCircle2, Clock, LogOut
+  AlertCircle, CheckCircle2, Clock, LogOut, Download
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus } from "@/utils/storage";
 import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
 import { format } from "date-fns";
@@ -62,6 +63,29 @@ export default function AdminDashboard() {
     toast.success("Signed out");
   };
 
+  const handleExportExcel = () => {
+    if (records.length === 0) {
+      toast.error("No data to export");
+      return;
+    }
+    const rows = records.map((r) => ({
+      "Tenant Name": r.tenantName,
+      "Company": r.companyName || "—",
+      "Building": r.buildingName,
+      "Unit": r.unitNumber,
+      "Unit Type": r.unitType,
+      "Annual Rent (AED)": r.annualRent,
+      "Visits": r.visitCount,
+      "Last Visit": format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a"),
+      "First Calculated": format(new Date(r.calculatedAt), "dd MMM yyyy"),
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Tenant Calculations");
+    XLSX.writeFile(wb, `Tenant_Calculations_${format(new Date(), "yyyy-MM-dd")}.xlsx`);
+    toast.success("Excel file downloaded");
+  };
+
   if (loading) {
     return <div className="container mx-auto px-4 py-12 text-center text-muted-foreground">Loading dashboard...</div>;
   }
@@ -99,9 +123,14 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-display font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground mt-1">Manage tenants, maintenance requests, and settings.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleSignOut}>
-          <LogOut className="w-4 h-4 mr-1" /> Sign Out
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={handleExportExcel}>
+            <Download className="w-4 h-4 mr-1" /> Export Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleSignOut}>
+            <LogOut className="w-4 h-4 mr-1" /> Sign Out
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
