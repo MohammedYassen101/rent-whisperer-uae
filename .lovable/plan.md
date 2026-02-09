@@ -1,47 +1,49 @@
 
 
-# App Summary for Tenants
+# Speed Up Admin Page Loading
 
-Here is a ready-to-share summary you can send to your tenants (via WhatsApp, email, or print):
+## Problem
+The admin page shows a blank "Loading..." screen for ~7 seconds because:
+1. Auth session check must complete before anything renders
+2. After auth, the dashboard makes 4 database queries sequentially before showing content
+3. No visual feedback beyond plain text "Loading..."
 
----
+## Solution
+Improve perceived and actual loading speed with these changes:
 
-**Alyassia Properties - Tenant Portal**
+### 1. Add Skeleton Loading UI
+Replace the plain "Loading..." text with animated skeleton placeholders that match the dashboard layout. Users will see the page structure immediately while data loads.
 
-Dear Tenant,
+### 2. Parallel Data Loading with React Query
+Replace the manual `useEffect` + `Promise.all` pattern with `@tanstack/react-query` (already installed). This provides:
+- Cached data on revisit (instant display)
+- Background refetching
+- Better loading/error states
 
-We are pleased to introduce our online Tenant Portal to make your experience with us easier and faster.
-
-**What you can do:**
-
-1. **Calculate Your Rent** - Enter your details, select your building and unit, and instantly see your full rent breakdown including payment schedule, VAT (for commercial tenants), and all applicable fees.
-
-2. **Download/Print Your Statement** - After calculating your rent, click "Print / Save as PDF" to get a detailed statement with all charges, payment dates, and fee schedules.
-
-3. **Submit Maintenance Requests** - Have an issue in your unit? Submit a maintenance request directly through the app with details and priority level.
-
-4. **Share Feedback** - We value your opinion! Use the feedback form to rate your experience and share your comments.
-
-**How to access:**
-Simply open this link on your phone or computer:
-**https://rent-whisperer-uae.lovable.app**
-
-**Steps to calculate your rent:**
-1. Enter your name
-2. Select Commercial or Residential
-3. Choose New Lease or Renewal
-4. Select your building and unit number
-5. Set the annual rent and number of payments
-6. Pick your lease start date
-7. Click "Calculate Rent"
-8. View your payment schedule and download/print your statement
-
-For maintenance requests, click "Maintenance" in the top menu.
-
-For any questions, visit the "Contact" page or reach us at:
-**info@alyassiaproperties.ae**
+### 3. Show Auth Form Immediately
+Instead of showing "Loading..." while checking auth, render the admin auth form shell immediately with a subtle loading overlay, so the page feels responsive.
 
 ---
 
-This is not a code change -- just a summary document for your tenants. Would you like me to add this as a page within the app itself (e.g., a "Help" or "How to Use" page)?
+## Technical Details
 
+### Files to modify:
+
+**src/pages/Admin.tsx**
+- Replace the loading state with a skeleton layout instead of plain text
+- Use a full-page skeleton that matches the dashboard structure
+
+**src/components/AdminDashboard.tsx**
+- Replace manual `useState`/`useEffect` data fetching with `useQuery` hooks from `@tanstack/react-query`
+- Each query runs in parallel automatically
+- Data is cached so revisiting the page is instant
+- Show skeleton cards while individual sections load
+
+**src/components/AdminDashboardSkeleton.tsx** (new file)
+- Reusable skeleton component matching the dashboard layout
+- Shows animated placeholder cards, stat boxes, and tables
+
+### Expected improvement:
+- First visit: ~2-3s faster perceived load (skeleton shows instantly)
+- Return visits: near-instant (cached data displayed while refetching in background)
+- Auth check still takes time but users see structure, not a blank screen
