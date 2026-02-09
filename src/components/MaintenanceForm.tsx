@@ -9,6 +9,7 @@ import { Wrench, Send, CheckCircle2 } from "lucide-react";
 import { buildings } from "@/data/buildings";
 import { saveMaintenanceRequest } from "@/utils/storage";
 import { toast } from "sonner";
+import { maintenanceRequestSchema } from "@/utils/validation";
 
 export default function MaintenanceForm() {
   const [tenantName, setTenantName] = useState("");
@@ -22,19 +23,21 @@ export default function MaintenanceForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!tenantName.trim() || !building || !unitNumber.trim() || !description.trim()) {
-      toast.error("Please fill in all required fields");
+    const result = maintenanceRequestSchema.safeParse({
+      tenantName,
+      companyName,
+      unitNumber,
+      building,
+      description,
+      priority,
+    });
+
+    if (!result.success) {
+      toast.error(result.error.errors[0]?.message || "Please fix the form errors");
       return;
     }
 
-    saveMaintenanceRequest({
-      tenantName: tenantName.trim(),
-      companyName: companyName.trim(),
-      unitNumber: unitNumber.trim(),
-      building,
-      description: description.trim(),
-      priority: priority as "low" | "medium" | "high" | "urgent",
-    });
+    saveMaintenanceRequest(result.data as Required<typeof result.data>);
 
     toast.success("Maintenance request submitted successfully!");
     setSubmitted(true);
@@ -107,6 +110,7 @@ export default function MaintenanceForm() {
                   placeholder="Your name"
                   value={tenantName}
                   onChange={(e) => setTenantName(e.target.value)}
+                  maxLength={100}
                 />
               </div>
               <div className="space-y-2">
@@ -116,6 +120,7 @@ export default function MaintenanceForm() {
                   placeholder="Company name"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
+                  maxLength={100}
                 />
               </div>
             </div>
@@ -143,6 +148,7 @@ export default function MaintenanceForm() {
                   placeholder="e.g. M101"
                   value={unitNumber}
                   onChange={(e) => setUnitNumber(e.target.value)}
+                  maxLength={20}
                 />
               </div>
             </div>
@@ -170,6 +176,7 @@ export default function MaintenanceForm() {
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                maxLength={1000}
               />
             </div>
 
