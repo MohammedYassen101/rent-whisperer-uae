@@ -44,40 +44,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let isMounted = true;
 
+    // Set up listener FIRST but don't await async operations inside it
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         if (!isMounted) return;
+        console.log("onAuthStateChange:", _event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          await checkAdmin(session.user.id);
+          // Use setTimeout to avoid Supabase deadlock
+          setTimeout(() => {
+            if (isMounted) checkAdmin(session.user.id);
+          }, 0);
         } else {
           setIsAdmin(false);
         }
-        if (isMounted) setLoading(false);
       }
     );
 
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!isMounted) return;
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await checkAdmin(session.user.id);
-        }
-      } finally {
-        if (isMounted) setLoading(false);
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      console.log("getSession result:", session?.user?.id ?? "no session");
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        checkAdmin(session.user.id).finally(() => {
+          if (isMounted) setLoading(false);
+        });
+      } else {
+        setLoading(false);
       }
-    };
-
-    initializeAuth();
+    }).catch(() => {
+      if (isMounted) setLoading(false);
+    });
 
     return () => {
       isMounted = false;
       subscription.unsubscribe();
     };
+  }, []);
+
+  // Auto-logout when browser/tab is closed
+  useEffect(() => {
+    const handleUnload = () => {
+      // Use navigator.sendBeacon isn't available for sign-out, 
+      // so we clear the session from storage directly
+      const storageKey = `sb-mppsaaczvsirfkytlbhj-auth-token`;
+      localStorage.removeItem(storageKey);
+      sessionStorage.removeItem(storageKey);
+    };
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);
 
   const signIn = async (email: string, password: string) => {
