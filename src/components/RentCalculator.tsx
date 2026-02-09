@@ -20,6 +20,7 @@ import { toast } from "sonner";
 export default function RentCalculator() {
   const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [contractType, setContractType] = useState<string>("");
   const [buildingId, setBuildingId] = useState("");
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
@@ -29,6 +30,8 @@ export default function RentCalculator() {
     calculation: RentCalculation;
     schedule: PaymentScheduleItem[];
   } | null>(null);
+
+  const isCommercial = contractType === "commercial";
 
   const availableUnits = useMemo(
     () => (buildingId ? getUnitsByBuilding(buildingId) : []),
@@ -55,6 +58,10 @@ export default function RentCalculator() {
       toast.error("Please enter the tenant name");
       return;
     }
+    if (!contractType) {
+      toast.error("Please select a contract type");
+      return;
+    }
     if (!buildingId) {
       toast.error("Please select a building");
       return;
@@ -72,7 +79,6 @@ export default function RentCalculator() {
       return;
     }
 
-    const isCommercial = selectedUnit ? isCommercialUnit(selectedUnit.type) : false;
     const calculation = calculateRent(annualRent, parseInt(numPayments), isCommercial);
     const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
 
@@ -148,7 +154,23 @@ export default function RentCalculator() {
               />
             </div>
 
-            {selectedUnit && isCommercialUnit(selectedUnit.type) && (
+            <div className="space-y-2">
+              <Label>Contract Type *</Label>
+              <Select value={contractType} onValueChange={(val) => {
+                setContractType(val);
+                if (val !== "commercial") setCompanyName("");
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select contract type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="commercial">Commercial</SelectItem>
+                  <SelectItem value="residential">Residential</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {isCommercial && (
               <div className="space-y-2">
                 <Label htmlFor="companyName">Company Name</Label>
                 <Input
@@ -197,10 +219,10 @@ export default function RentCalculator() {
 
             {selectedUnit && (
               <div className="flex gap-2">
-                <Badge variant={isCommercialUnit(selectedUnit.type) ? "default" : "secondary"}>
+                <Badge variant={isCommercial ? "default" : "secondary"}>
                   {selectedUnit.type}
                 </Badge>
-                {isCommercialUnit(selectedUnit.type) && (
+                {isCommercial && (
                   <Badge className="bg-accent text-accent-foreground">
                     +5% VAT
                   </Badge>
