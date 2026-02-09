@@ -22,32 +22,37 @@ export default function AdminDashboard() {
   const { signOut } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: records = [], isLoading: loadingRecords } = useQuery({
+  const { data: records = [], isLoading: loadingRecords, isError: errorRecords } = useQuery({
     queryKey: ["admin-records"],
     queryFn: getTenantRecords,
     staleTime: 60_000,
+    retry: 1,
   });
 
-  const { data: requests = [], isLoading: loadingRequests } = useQuery({
+  const { data: requests = [], isLoading: loadingRequests, isError: errorRequests } = useQuery({
     queryKey: ["admin-requests"],
     queryFn: getMaintenanceRequests,
     staleTime: 60_000,
+    retry: 1,
   });
 
-  const { data: feedback = [], isLoading: loadingFeedback } = useQuery({
+  const { data: feedback = [], isLoading: loadingFeedback, isError: errorFeedback } = useQuery({
     queryKey: ["admin-feedback"],
     queryFn: getFeedback,
     staleTime: 60_000,
+    retry: 1,
   });
 
-  const { data: rentIncreaseData, isLoading: loadingRentIncrease } = useQuery({
+  const { data: rentIncreaseData, isLoading: loadingRentIncrease, isError: errorRentIncrease } = useQuery({
     queryKey: ["admin-rent-increase"],
     queryFn: getRentIncrease,
     staleTime: 60_000,
+    retry: 1,
   });
 
   const rentIncreaseEnabled = rentIncreaseData?.enabled ?? false;
   const loading = loadingRecords || loadingRequests || loadingFeedback || loadingRentIncrease;
+  const hasError = errorRecords || errorRequests || errorFeedback || errorRentIncrease;
 
   const handleRentIncreaseToggle = async (enabled: boolean) => {
     await setRentIncrease(enabled);
@@ -120,8 +125,19 @@ export default function AdminDashboard() {
     toast.success("Excel file downloaded with all sheets");
   };
 
-  if (loading) {
+  if (loading && !hasError) {
     return <AdminDashboardSkeleton />;
+  }
+
+  if (hasError) {
+    return (
+      <main className="container mx-auto px-4 py-16 text-center">
+        <p className="text-destructive font-medium mb-2">Failed to load dashboard data.</p>
+        <Button variant="outline" onClick={() => queryClient.invalidateQueries()}>
+          Retry
+        </Button>
+      </main>
+    );
   }
 
   const now = new Date();
