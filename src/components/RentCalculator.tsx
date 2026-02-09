@@ -46,8 +46,7 @@ export default function RentCalculator() {
 
   useEffect(() => {
     if (selectedUnit) {
-      // Always apply mandatory 5% increase on the unit's base rent
-      setAnnualRent(Math.round(selectedUnit.annualRent * 1.05 * 100) / 100);
+      setAnnualRent(selectedUnit.annualRent);
     }
   }, [selectedUnit]);
 
@@ -73,7 +72,10 @@ export default function RentCalculator() {
       return;
     }
 
-    const calculation = calculateRent(result.data.annualRent, parseInt(numPayments), isCommercial);
+    // Apply mandatory 5% increase on the old rent
+    const newRent = Math.round(result.data.annualRent * 1.05 * 100) / 100;
+
+    const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial);
     const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
 
     setResults({ calculation, schedule });
@@ -85,7 +87,7 @@ export default function RentCalculator() {
       buildingName: selectedBuilding?.name || "",
       unitNumber: selectedUnit?.unitNumber || "",
       unitType: selectedUnit?.type || "",
-      annualRent,
+      annualRent: newRent,
       calculatedAt: new Date().toISOString(),
     }).catch(() => {});
 
@@ -240,7 +242,7 @@ export default function RentCalculator() {
 
             <div>
               <div className="space-y-2">
-                <Label htmlFor="annualRent">Annual Rent (AED) *</Label>
+                <Label htmlFor="annualRent">Old Annual Rent (AED) *</Label>
                 <Input
                   id="annualRent"
                   type="number"
@@ -248,11 +250,9 @@ export default function RentCalculator() {
                   value={annualRent || ""}
                   onChange={(e) => setAnnualRent(parseFloat(e.target.value) || 0)}
                 />
-                {selectedUnit && selectedUnit.annualRent > 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Base rent: {selectedUnit.annualRent.toLocaleString()} AED → with 5% increase: {annualRent.toLocaleString()} AED
-                  </p>
-                )}
+                <p className="text-xs text-muted-foreground">
+                  Enter the current rent — a 5% increase will be applied automatically.
+                </p>
               </div>
             </div>
 
