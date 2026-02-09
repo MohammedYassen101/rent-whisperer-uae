@@ -18,6 +18,7 @@ interface PrintData {
   leaseStartDate: string;
   leaseEndDate: string;
   leaseType: string;
+  isCommercial: boolean;
 }
 
 function formatAED(amount: number): string {
@@ -47,7 +48,7 @@ export function printReceipt(data: PrintData): void {
     <tr>
       <td>${fee.name}</td>
       <td>${fee.nameAr}</td>
-      <td class="amount">${formatAED(fee.amount)}</td>
+      <td class="amount">${formatAED(data.isCommercial ? fee.amountCommercial : fee.amountResidential)}</td>
     </tr>
   `
     )
