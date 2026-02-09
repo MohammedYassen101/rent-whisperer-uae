@@ -53,7 +53,7 @@ export default function AdminAuth({ onAuthenticated }: AdminAuthProps) {
 
     // Simple hash check — not cryptographically secure but better than plaintext
     const hash = Array.from(password).reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
-    if (hash === 555858918) {
+    if (hash === 1454268421) {
       setAdminSession();
       onAuthenticated();
     } else {
