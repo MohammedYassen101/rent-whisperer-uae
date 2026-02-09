@@ -54,7 +54,7 @@ export function printTenantPdf(record: TenantRecord): void {
     <html dir="ltr" lang="en">
     <head>
       <meta charset="UTF-8" />
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'none';">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src * data:; script-src 'none';">
       <title>Alyassia Properties - Rent Statement - ${escapeHtml(record.tenantName)}</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -93,6 +93,7 @@ export function printTenantPdf(record: TenantRecord): void {
     </head>
     <body>
       <div class="header">
+        <img src="${window.location.origin}/logo.png" alt="Alyassia Properties" style="max-width: 200px; margin: 0 auto 12px; display: block;" />
         <div class="company-name">ALYASSIA PROPERTIES L.L.C.</div>
         <div class="company-name-ar">شركة الياسية للعقارات ش.ش ذ.م.م</div>
         <div class="doc-title">Rent Statement</div>
