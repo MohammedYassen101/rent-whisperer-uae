@@ -105,7 +105,7 @@ export default function MaintenanceForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="maint-name">Tenant Name *</Label>
                 <Input
@@ -128,7 +128,7 @@ export default function MaintenanceForm() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Building *</Label>
                 <Select value={building} onValueChange={setBuilding}>

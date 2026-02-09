@@ -164,23 +164,25 @@ export default function AdminDashboard() {
 
   return (
     <main className="container mx-auto px-4 py-8 md:py-12 space-y-8">
-      <div className="flex items-center justify-between animate-fade-in">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Manage tenants, maintenance requests, and settings.</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <a href="mailto:info@alyassiaproperties.ae">
-              <Mail className="w-4 h-4 mr-1" /> Email Us
-            </a>
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExportExcel}>
-            <Download className="w-4 h-4 mr-1" /> Export Excel
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleSignOut}>
-            <LogOut className="w-4 h-4 mr-1" /> Sign Out
-          </Button>
+      <div className="space-y-4 animate-fade-in">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">Admin Dashboard</h1>
+            <p className="text-muted-foreground mt-1 text-sm md:text-base">Manage tenants, maintenance requests, and settings.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <a href="mailto:info@alyassiaproperties.ae">
+                <Mail className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Email Us</span>
+              </a>
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleExportExcel}>
+              <Download className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Export</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Sign Out</span>
+            </Button>
+          </div>
         </div>
       </div>
 
