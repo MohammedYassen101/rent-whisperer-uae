@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import AdminAuth, { isAdminAuthenticated, clearAdminSession } from "@/components/AdminAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -16,17 +17,23 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export default function Admin() {
+  const [authenticated, setAuthenticated] = useState(isAdminAuthenticated());
   const [records, setRecords] = useState<TenantRecord[]>([]);
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
   const [feedback, setFeedback] = useState<TenantFeedback[]>([]);
   const [rentIncreaseEnabled, setRentIncreaseEnabled] = useState(false);
 
   useEffect(() => {
+    if (!authenticated) return;
     setRecords(getTenantRecords());
     setRequests(getMaintenanceRequests());
     setFeedback(getFeedback());
     setRentIncreaseEnabled(getRentIncrease().enabled);
-  }, []);
+  }, [authenticated]);
+
+  if (!authenticated) {
+    return <AdminAuth onAuthenticated={() => setAuthenticated(true)} />;
+  }
 
   const handleRentIncreaseToggle = (enabled: boolean) => {
     setRentIncreaseEnabled(enabled);
