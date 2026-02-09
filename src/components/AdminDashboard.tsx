@@ -65,26 +65,57 @@ export default function AdminDashboard() {
   };
 
   const handleExportExcel = () => {
-    if (records.length === 0) {
+    if (records.length === 0 && requests.length === 0 && feedback.length === 0) {
       toast.error("No data to export");
       return;
     }
-    const rows = records.map((r) => ({
-      "Tenant Name": r.tenantName,
-      "Company": r.companyName || "—",
-      "Building": r.buildingName,
-      "Unit": r.unitNumber,
-      "Unit Type": r.unitType,
-      "Annual Rent (AED)": r.annualRent,
-      "Visits": r.visitCount,
-      "Last Visit": format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a"),
-      "First Calculated": format(new Date(r.calculatedAt), "dd MMM yyyy"),
-    }));
-    const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Tenant Calculations");
-    XLSX.writeFile(wb, `Tenant_Calculations_${format(new Date(), "yyyy-MM-dd")}.xlsx`);
-    toast.success("Excel file downloaded");
+
+    // Sheet 1: Tenant Calculations
+    if (records.length > 0) {
+      const tenantRows = records.map((r) => ({
+        "Tenant Name": r.tenantName,
+        "Company": r.companyName || "—",
+        "Building": r.buildingName,
+        "Unit": r.unitNumber,
+        "Unit Type": r.unitType,
+        "Annual Rent (AED)": r.annualRent,
+        "Visits": r.visitCount,
+        "Last Visit": format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a"),
+        "First Calculated": format(new Date(r.calculatedAt), "dd MMM yyyy"),
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(tenantRows), "Tenant Calculations");
+    }
+
+    // Sheet 2: Maintenance Requests
+    if (requests.length > 0) {
+      const maintRows = requests.map((r) => ({
+        "Tenant Name": r.tenantName,
+        "Company": r.companyName || "—",
+        "Building": r.building,
+        "Unit": r.unitNumber,
+        "Description": r.description,
+        "Priority": r.priority,
+        "Status": r.status,
+        "Submitted": format(new Date(r.submittedAt), "dd MMM yyyy, hh:mm a"),
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(maintRows), "Maintenance Requests");
+    }
+
+    // Sheet 3: Feedback
+    if (feedback.length > 0) {
+      const fbRows = feedback.map((f) => ({
+        "Tenant Name": f.tenantName,
+        "Company": f.companyName || "—",
+        "Rating": f.rating,
+        "Comment": f.comment || "—",
+        "Submitted": format(new Date(f.submittedAt), "dd MMM yyyy, hh:mm a"),
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(fbRows), "Feedback");
+    }
+
+    XLSX.writeFile(wb, `Dashboard_Report_${format(new Date(), "yyyy-MM-dd")}.xlsx`);
+    toast.success("Excel file downloaded with all sheets");
   };
 
   if (loading) {
