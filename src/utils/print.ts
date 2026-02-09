@@ -21,6 +21,17 @@ interface PrintData {
   isCommercial: boolean;
 }
 
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
 function formatAED(amount: number): string {
   return `AED ${amount.toLocaleString("en-AE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
@@ -59,6 +70,7 @@ export function printReceipt(data: PrintData): void {
     <html dir="ltr" lang="en">
     <head>
       <meta charset="UTF-8" />
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'none';">
       <title>Alyassia Properties - Rent Statement</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -106,13 +118,13 @@ export function printReceipt(data: PrintData): void {
       <div class="section">
         <div class="section-title">Tenant Information</div>
         <div class="info-grid">
-          <div class="info-item"><span class="info-label">Tenant Name:</span><span class="info-value">${data.tenantName}</span></div>
-          <div class="info-item"><span class="info-label">Company:</span><span class="info-value">${data.companyName || "—"}</span></div>
-          <div class="info-item"><span class="info-label">Building:</span><span class="info-value">${data.buildingName}</span></div>
-          <div class="info-item"><span class="info-label">Unit:</span><span class="info-value">${data.unitNumber}</span></div>
-          <div class="info-item"><span class="info-label">Unit Type:</span><span class="info-value">${data.unitType}${data.area ? ` (${data.area} sqm)` : ""}</span></div>
-          <div class="info-item"><span class="info-label">Lease Type:</span><span class="info-value">${data.leaseType}</span></div>
-          <div class="info-item"><span class="info-label">Lease Period:</span><span class="info-value">${data.leaseStartDate} — ${data.leaseEndDate}</span></div>
+          <div class="info-item"><span class="info-label">Tenant Name:</span><span class="info-value">${escapeHtml(data.tenantName)}</span></div>
+          <div class="info-item"><span class="info-label">Company:</span><span class="info-value">${escapeHtml(data.companyName || "—")}</span></div>
+          <div class="info-item"><span class="info-label">Building:</span><span class="info-value">${escapeHtml(data.buildingName)}</span></div>
+          <div class="info-item"><span class="info-label">Unit:</span><span class="info-value">${escapeHtml(data.unitNumber)}</span></div>
+          <div class="info-item"><span class="info-label">Unit Type:</span><span class="info-value">${escapeHtml(data.unitType)}${data.area ? ` (${data.area} sqm)` : ""}</span></div>
+          <div class="info-item"><span class="info-label">Lease Type:</span><span class="info-value">${escapeHtml(data.leaseType)}</span></div>
+          <div class="info-item"><span class="info-label">Lease Period:</span><span class="info-value">${escapeHtml(data.leaseStartDate)} — ${escapeHtml(data.leaseEndDate)}</span></div>
         </div>
       </div>
 
