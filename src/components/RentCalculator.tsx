@@ -15,12 +15,14 @@ import { printReceipt } from "@/utils/print";
 import { RentCalculation, PaymentScheduleItem } from "@/types/rent";
 import { addMonths, format } from "date-fns";
 import PaymentSchedule from "./PaymentSchedule";
+import UnitSearchSelect from "./UnitSearchSelect";
 import { toast } from "sonner";
 
 export default function RentCalculator() {
   const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [contractType, setContractType] = useState<string>("");
+  const [leaseType, setLeaseType] = useState<string>("");
   const [buildingId, setBuildingId] = useState("");
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
@@ -154,20 +156,35 @@ export default function RentCalculator() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Contract Type *</Label>
-              <Select value={contractType} onValueChange={(val) => {
-                setContractType(val);
-                if (val !== "commercial") setCompanyName("");
-              }}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select contract type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="commercial">Commercial</SelectItem>
-                  <SelectItem value="residential">Residential</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Contract Type *</Label>
+                <Select value={contractType} onValueChange={(val) => {
+                  setContractType(val);
+                  if (val !== "commercial") setCompanyName("");
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="commercial">Commercial</SelectItem>
+                    <SelectItem value="residential">Residential</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Lease Type *</Label>
+                <Select value={leaseType} onValueChange={setLeaseType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select lease" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New Lease</SelectItem>
+                    <SelectItem value="renewal">Renewal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {isCommercial && (
@@ -202,19 +219,12 @@ export default function RentCalculator() {
 
             <div className="space-y-2">
               <Label>Unit Number *</Label>
-              <Select value={unitId} onValueChange={setUnitId} disabled={!buildingId}>
-                <SelectTrigger>
-                  <SelectValue placeholder={buildingId ? "Select unit" : "Select a building first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableUnits.map((u) => (
-                    <SelectItem key={u.id} value={u.id}>
-                      {u.unitNumber} — {u.type}
-                      {u.area ? ` (${u.area} sqm)` : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <UnitSearchSelect
+                units={availableUnits}
+                value={unitId}
+                onSelect={setUnitId}
+                disabled={!buildingId}
+              />
             </div>
 
             {selectedUnit && (
