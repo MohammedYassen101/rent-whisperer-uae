@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Users, Eye, Star, Wrench, TrendingUp, Calendar,
-  AlertCircle, CheckCircle2, Clock, LogOut, Download
+  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText
 } from "lucide-react";
 import * as XLSX from "xlsx";
-import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus } from "@/utils/storage";
+import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord } from "@/utils/storage";
+import { printTenantPdf } from "@/utils/tenantPrint";
 import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -56,6 +57,16 @@ export default function AdminDashboard() {
     await setRentIncrease(enabled);
     queryClient.invalidateQueries({ queryKey: ["admin-rent-increase"] });
     toast.success(enabled ? "5% rent increase activated" : "Rent increase deactivated");
+  };
+
+  const handleDeleteTenant = async (id: string) => {
+    try {
+      await deleteTenantRecord(id);
+      queryClient.invalidateQueries({ queryKey: ["admin-records"] });
+      toast.success("Tenant record deleted");
+    } catch {
+      toast.error("Failed to delete tenant record");
+    }
   };
 
   const handleMaintenanceStatusChange = async (id: string, status: MaintenanceRequest["status"]) => {
@@ -266,20 +277,31 @@ export default function AdminDashboard() {
                     <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Company</th>
                     <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Building / Unit</th>
                     <th className="text-center py-2 px-3 font-semibold text-muted-foreground">Visits</th>
-                    <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Last Visit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {records.map((r) => (
-                    <tr key={r.id} className="border-b border-border/50 hover:bg-secondary/50">
-                      <td className="py-2.5 px-3 font-medium">{r.tenantName}</td>
-                      <td className="py-2.5 px-3 text-muted-foreground">{r.companyName || "—"}</td>
-                      <td className="py-2.5 px-3">{r.buildingName} / {r.unitNumber}</td>
-                      <td className="py-2.5 px-3 text-center"><Badge variant="secondary">{r.visitCount}</Badge></td>
-                      <td className="py-2.5 px-3 text-muted-foreground">{format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a")}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                     <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Last Visit</th>
+                     <th className="text-center py-2 px-3 font-semibold text-muted-foreground">Actions</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {records.map((r) => (
+                     <tr key={r.id} className="border-b border-border/50 hover:bg-secondary/50">
+                       <td className="py-2.5 px-3 font-medium">{r.tenantName}</td>
+                       <td className="py-2.5 px-3 text-muted-foreground">{r.companyName || "—"}</td>
+                       <td className="py-2.5 px-3">{r.buildingName} / {r.unitNumber}</td>
+                       <td className="py-2.5 px-3 text-center"><Badge variant="secondary">{r.visitCount}</Badge></td>
+                       <td className="py-2.5 px-3 text-muted-foreground">{format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a")}</td>
+                       <td className="py-2.5 px-3 text-center">
+                         <div className="flex items-center justify-center gap-1">
+                           <Button size="sm" variant="ghost" onClick={() => printTenantPdf(r)} title="Download PDF">
+                             <FileText className="w-4 h-4" />
+                           </Button>
+                           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteTenant(r.id)} title="Delete">
+                             <Trash2 className="w-4 h-4" />
+                           </Button>
+                         </div>
+                       </td>
+                     </tr>
+                   ))}
+                 </tbody>
               </table>
             </div>
           )}

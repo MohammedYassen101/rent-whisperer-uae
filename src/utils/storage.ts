@@ -126,6 +126,14 @@ export async function saveTenantRecord(record: {
   }
 }
 
+export async function deleteTenantRecord(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("tenant_records")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
+
 export async function getTenantRecords() {
   const { data, error } = await supabase
     .from("tenant_records")
