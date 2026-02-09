@@ -21,7 +21,7 @@ export default function Header() {
             <img
               src={logo}
               alt="Alyassia Properties"
-              className="h-10 md:h-12 w-auto object-contain"
+              className="h-14 md:h-16 w-auto object-contain"
             />
             <div className="hidden sm:block">
               <div className="text-sm md:text-base font-display font-bold text-surface-dark-foreground tracking-wide">
