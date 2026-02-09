@@ -121,6 +121,7 @@ export default function RentCalculator() {
       fees,
       leaseStartDate: format(leaseStart, "dd MMM yyyy"),
       leaseEndDate: format(leaseEnd, "dd MMM yyyy"),
+      leaseType: leaseType === "new" ? "New Lease" : "Renewal",
     });
   };
 

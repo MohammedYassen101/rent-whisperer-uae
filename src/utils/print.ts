@@ -17,6 +17,7 @@ interface PrintData {
   fees: Fee[];
   leaseStartDate: string;
   leaseEndDate: string;
+  leaseType: string;
 }
 
 function formatAED(amount: number): string {
@@ -109,6 +110,7 @@ export function printReceipt(data: PrintData): void {
           <div class="info-item"><span class="info-label">Building:</span><span class="info-value">${data.buildingName}</span></div>
           <div class="info-item"><span class="info-label">Unit:</span><span class="info-value">${data.unitNumber}</span></div>
           <div class="info-item"><span class="info-label">Unit Type:</span><span class="info-value">${data.unitType}${data.area ? ` (${data.area} sqm)` : ""}</span></div>
+          <div class="info-item"><span class="info-label">Lease Type:</span><span class="info-value">${data.leaseType}</span></div>
           <div class="info-item"><span class="info-label">Lease Period:</span><span class="info-value">${data.leaseStartDate} — ${data.leaseEndDate}</span></div>
         </div>
       </div>
