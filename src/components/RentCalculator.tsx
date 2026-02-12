@@ -10,7 +10,7 @@ import { Calculator, Printer, Building2, DollarSign, Calendar, FileText } from "
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
-import { saveTenantRecord, getTenantBrokerFees } from "@/utils/storage";
+import { saveTenantRecord, getTenantBrokerFees, getRentIncrease } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
 import { RentCalculation, PaymentScheduleItem } from "@/types/rent";
 import { addMonths, format } from "date-fns";
@@ -71,9 +71,11 @@ export default function RentCalculator() {
       toast.error(result.error.errors[0]?.message || "Please fix the form errors");
       return;
     }
-
-    // Apply mandatory 5% increase on the old rent
-    const newRent = Math.round(result.data.annualRent * 1.05 * 100) / 100;
+    // Check rent increase setting
+    const rentIncreaseSetting = await getRentIncrease();
+    const newRent = rentIncreaseSetting.enabled
+      ? Math.round(result.data.annualRent * (1 + rentIncreaseSetting.percentage / 100) * 100) / 100
+      : result.data.annualRent;
 
     // Check if tenant has broker fee
     let hasBrokerFee = false;
