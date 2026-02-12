@@ -71,11 +71,14 @@ export default function RentCalculator() {
       toast.error(result.error.errors[0]?.message || "Please fix the form errors");
       return;
     }
-    // Check rent increase setting
-    const rentIncreaseSetting = await getRentIncrease();
-    const newRent = rentIncreaseSetting.enabled
-      ? Math.round(result.data.annualRent * (1 + rentIncreaseSetting.percentage / 100) * 100) / 100
-      : result.data.annualRent;
+    // Apply 5% increase only on renewals when admin toggle is enabled
+    let newRent = result.data.annualRent;
+    if (leaseType === "renewal") {
+      const rentIncreaseSetting = await getRentIncrease();
+      if (rentIncreaseSetting.enabled) {
+        newRent = Math.round(result.data.annualRent * (1 + rentIncreaseSetting.percentage / 100) * 100) / 100;
+      }
+    }
 
     // Check if tenant has broker fee
     let hasBrokerFee = false;
