@@ -315,7 +315,13 @@ export default function AdminDashboard() {
                 When enabled, a 5% broker fee will be applied to all rent calculations.
               </p>
             </div>
-            <Switch checked={brokerFeeEnabled} onCheckedChange={handleBrokerFeeToggle} />
+            <Button 
+              onClick={() => handleBrokerFeeToggle(!brokerFeeEnabled)}
+              variant={brokerFeeEnabled ? "destructive" : "default"}
+              className="gap-2"
+            >
+              {brokerFeeEnabled ? "Deactivate Fee" : "Activate Fee"}
+            </Button>
           </div>
           {brokerFeeEnabled && (
             <div className="mt-4 p-3 rounded-md bg-gold-subtle border border-gold/30">
