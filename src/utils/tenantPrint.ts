@@ -2,6 +2,7 @@ import { TenantRecord } from "@/types/rent";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
 import { fees } from "@/data/fees";
 import { format, addMonths } from "date-fns";
+import { numberToWordsEn, numberToWordsAr } from "@/utils/numberToWords";
 
 function escapeHtml(text: string): string {
   const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
@@ -29,7 +30,11 @@ export function printTenantPdf(record: TenantRecord): void {
       <td>${format(item.date, "dd MMM yyyy")}</td>
       <td class="amount">${fmtAED(item.baseAmount)}</td>
       <td class="amount">${item.includesVat ? fmtAED(item.vatAmount) : "—"}</td>
-      <td class="amount"><strong>${fmtAED(item.amount)}</strong></td>
+      <td class="amount">
+        <strong>${fmtAED(item.amount)}</strong>
+        <div class="amount-words">${numberToWordsEn(item.amount)}</div>
+        <div class="amount-words" style="direction:rtl;text-align:right;">${numberToWordsAr(item.amount)}</div>
+      </td>
     </tr>
   `
     )
@@ -77,7 +82,7 @@ export function printTenantPdf(record: TenantRecord): void {
         .vat-row { background: #fff8e1 !important; }
         .vat-row td { font-weight: 600; }
         .amount { text-align: right; font-variant-numeric: tabular-nums; }
-        .total-row { background: #f5f0e6 !important; font-weight: 700; }
+        .amount-words { font-size: 9px; color: #666; font-weight: 400; margin-top: 2px; line-height: 1.3; }
         .total-row td { border-top: 2px solid #e8d5a3; padding-top: 10px; }
         .highlight-box { background: #fff8e1; border: 1px solid #e8d5a3; border-radius: 6px; padding: 12px 16px; margin-top: 12px; }
         .highlight-box .label { font-size: 11px; color: #8a6d2b; text-transform: uppercase; letter-spacing: 0.5px; }
