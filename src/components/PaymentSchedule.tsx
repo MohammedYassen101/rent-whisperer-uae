@@ -4,6 +4,7 @@ import { CalendarDays } from "lucide-react";
 import { PaymentScheduleItem } from "@/types/rent";
 import { formatAED } from "@/utils/calculations";
 import { format } from "date-fns";
+import { numberToWordsEn, numberToWordsAr } from "@/utils/numberToWords";
 
 interface PaymentScheduleProps {
   schedule: PaymentScheduleItem[];
@@ -65,13 +66,21 @@ export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
                       <span className="text-muted-foreground">—</span>
                     )}
                   </td>
-                  <td className="py-3 px-3 text-right tabular-nums font-bold">
-                    AED {formatAED(item.amount)}
-                    {item.includesVat && (
-                      <Badge className="ml-2 bg-accent text-accent-foreground text-[10px] px-1.5 py-0">
-                        VAT
-                      </Badge>
-                    )}
+                  <td className="py-3 px-3 text-right">
+                    <div className="tabular-nums font-bold">
+                      AED {formatAED(item.amount)}
+                      {item.includesVat && (
+                        <Badge className="ml-2 bg-accent text-accent-foreground text-[10px] px-1.5 py-0">
+                          VAT
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground font-normal mt-1 leading-tight">
+                      {numberToWordsEn(item.amount)}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground font-normal leading-tight" dir="rtl">
+                      {numberToWordsAr(item.amount)}
+                    </div>
                   </td>
                 </tr>
               ))}
