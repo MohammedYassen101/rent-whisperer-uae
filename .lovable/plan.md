@@ -1,49 +1,34 @@
 
 
-# Speed Up Admin Page Loading
+## Analysis
 
-## Problem
-The admin page shows a blank "Loading..." screen for ~7 seconds because:
-1. Auth session check must complete before anything renders
-2. After auth, the dashboard makes 4 database queries sequentially before showing content
-3. No visual feedback beyond plain text "Loading..."
+I've reviewed the codebase and found that the **Broker Fee toggle is already fully implemented** on the Admin Dashboard. Here's what I discovered:
 
-## Solution
-Improve perceived and actual loading speed with these changes:
+### Current Implementation:
+1. **Broker Fee Toggle Card** (lines 302-329 in `AdminDashboard.tsx`):
+   - A dedicated card with the `Percent` icon showing "Broker Fee Setting"
+   - A toggle switch to enable/disable the 5% broker fee
+   - Visual feedback when enabled (gold alert box)
+   - Already integrated with the `getBrokerFee()` and `setBrokerFee()` functions
 
-### 1. Add Skeleton Loading UI
-Replace the plain "Loading..." text with animated skeleton placeholders that match the dashboard layout. Users will see the page structure immediately while data loads.
+2. **Backend Functions** (`storage.ts`):
+   - `getBrokerFee()` - retrieves broker fee setting from `app_settings` table
+   - `setBrokerFee()` - saves broker fee toggle state to database
+   - Properly handles both insert and update operations
 
-### 2. Parallel Data Loading with React Query
-Replace the manual `useEffect` + `Promise.all` pattern with `@tanstack/react-query` (already installed). This provides:
-- Cached data on revisit (instant display)
-- Background refetching
-- Better loading/error states
+3. **Authentication Issue**:
+   - The reason you're seeing the login form instead of the dashboard is because the browser session was reset or the authentication token is not being properly recognized
+   - The console logs show an admin user exists with ID `1ba1a388-9a46-4fdd-971e-2140cd4d12c1`, but the current session is not loading it
 
-### 3. Show Auth Form Immediately
-Instead of showing "Loading..." while checking auth, render the admin auth form shell immediately with a subtle loading overlay, so the page feels responsive.
+### What Needs to Be Done:
 
----
+The issue is **not** that the broker fee button is missing—it's already there! The problem is the authentication session. The solution requires:
 
-## Technical Details
+1. **Sign in to the admin dashboard** using valid admin credentials
+2. Once authenticated and the dashboard loads, you'll see the Broker Fee toggle card below the Rent Increase card
+3. Click the toggle to enable/disable the 5% broker fee
+4. The setting will be saved to the database (visible only to admins)
 
-### Files to modify:
+### Why You're Not Seeing It:
+The broker fee toggle appears only after you're successfully logged in as an admin on the Admin Dashboard (`/admin` route). Currently, the page is showing the login form because your session isn't loaded.
 
-**src/pages/Admin.tsx**
-- Replace the loading state with a skeleton layout instead of plain text
-- Use a full-page skeleton that matches the dashboard structure
-
-**src/components/AdminDashboard.tsx**
-- Replace manual `useState`/`useEffect` data fetching with `useQuery` hooks from `@tanstack/react-query`
-- Each query runs in parallel automatically
-- Data is cached so revisiting the page is instant
-- Show skeleton cards while individual sections load
-
-**src/components/AdminDashboardSkeleton.tsx** (new file)
-- Reusable skeleton component matching the dashboard layout
-- Shows animated placeholder cards, stat boxes, and tables
-
-### Expected improvement:
-- First visit: ~2-3s faster perceived load (skeleton shows instantly)
-- Return visits: near-instant (cached data displayed while refetching in background)
-- Auth check still takes time but users see structure, not a blank screen
