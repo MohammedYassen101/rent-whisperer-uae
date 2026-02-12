@@ -10,7 +10,7 @@ import { Calculator, Printer, Building2, DollarSign, Calendar, FileText } from "
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
-import { saveTenantRecord } from "@/utils/storage";
+import { saveTenantRecord, getTenantBrokerFees } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
 import { RentCalculation, PaymentScheduleItem } from "@/types/rent";
 import { addMonths, format } from "date-fns";
@@ -56,7 +56,7 @@ export default function RentCalculator() {
     setResults(null);
   }, [buildingId]);
 
-  const handleCalculate = () => {
+  const handleCalculate = async () => {
     const result = rentCalculatorSchema.safeParse({
       tenantName,
       companyName,
@@ -75,7 +75,18 @@ export default function RentCalculator() {
     // Apply mandatory 5% increase on the old rent
     const newRent = Math.round(result.data.annualRent * 1.05 * 100) / 100;
 
-    const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial);
+    // Check if tenant has broker fee
+    let hasBrokerFee = false;
+    try {
+      const brokerTenants = await getTenantBrokerFees();
+      hasBrokerFee = brokerTenants.some(
+        (t) => t.tenantName.toLowerCase().trim() === tenantName.toLowerCase().trim()
+      );
+    } catch {
+      // If fetch fails, proceed without broker fee
+    }
+
+    const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
     const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
 
     setResults({ calculation, schedule });
@@ -110,6 +121,7 @@ export default function RentCalculator() {
       annualRent: results.calculation.annualRent,
       monthlyRent: results.calculation.monthlyRent,
       vatAmount: results.calculation.vatAmount,
+      brokerFee: results.calculation.brokerFee,
       numPayments: results.calculation.numPayments,
       schedule: results.schedule,
       fees,
@@ -310,6 +322,14 @@ export default function RentCalculator() {
                   <SummaryCard
                     label="VAT (5%)"
                     value={formatAED(results.calculation.vatAmount)}
+                    icon={<DollarSign className="w-4 h-4" />}
+                    highlight
+                  />
+                )}
+                {results.calculation.brokerFee > 0 && (
+                  <SummaryCard
+                    label="Broker Fee (5%)"
+                    value={formatAED(results.calculation.brokerFee)}
                     icon={<DollarSign className="w-4 h-4" />}
                     highlight
                   />

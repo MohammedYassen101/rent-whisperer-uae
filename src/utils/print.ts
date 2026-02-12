@@ -11,7 +11,7 @@ interface PrintData {
   annualRent: number;
   monthlyRent: number;
   vatAmount: number;
-  
+  brokerFee: number;
   numPayments: number;
   schedule: PaymentScheduleItem[];
   fees: Fee[];
@@ -146,6 +146,14 @@ export function printReceipt(data: PrintData): void {
             ? `<div class="highlight-box">
             <div class="label">5% VAT on Commercial Rent (applied to first payment)</div>
             <div class="value">${formatAED(data.vatAmount)}</div>
+          </div>`
+            : ""
+        }
+        ${
+          data.brokerFee > 0
+            ? `<div class="highlight-box" style="margin-top:8px;">
+            <div class="label">Broker Fee (5% of Annual Rent)</div>
+            <div class="value">${formatAED(data.brokerFee)}</div>
           </div>`
             : ""
         }
