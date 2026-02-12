@@ -67,7 +67,22 @@ export function numberToWordsAr(amount: number): string {
   const whole = Math.floor(amount);
   const fils = Math.round((amount - whole) * 100);
 
-  const scales = ["", "ألف", "مليون", "مليار"];
+  const scalesAr: string[][] = [
+    [""],
+    ["ألف", "ألفان", "آلاف", "ألف"],
+    ["مليون", "مليونان", "ملايين", "مليون"],
+    ["مليار", "ملياران", "مليارات", "مليار"],
+  ];
+
+  function getScaleAr(scaleIdx: number, chunk: number): string {
+    if (scaleIdx === 0) return "";
+    const s = scalesAr[scaleIdx];
+    if (chunk === 1) return s[0];
+    if (chunk === 2) return s[1];
+    if (chunk >= 3 && chunk <= 10) return s[2];
+    return s[3];
+  }
+
   let num = whole;
   const parts: string[] = [];
   let scaleIndex = 0;
@@ -75,11 +90,16 @@ export function numberToWordsAr(amount: number): string {
   while (num > 0) {
     const chunk = num % 1000;
     if (chunk > 0) {
-      const word = convertHundredsAr(chunk);
-      if (scales[scaleIndex]) {
-        parts.unshift(`${word} ${scales[scaleIndex]}`);
+      const scaleName = getScaleAr(scaleIndex, chunk);
+      if (scaleIndex > 0 && chunk === 1) {
+        parts.unshift(scaleName);
+      } else if (scaleIndex > 0 && chunk === 2) {
+        parts.unshift(scaleName);
+      } else if (scaleName) {
+        const word = convertHundredsAr(chunk);
+        parts.unshift(`${word} ${scaleName}`);
       } else {
-        parts.unshift(word);
+        parts.unshift(convertHundredsAr(chunk));
       }
     }
     num = Math.floor(num / 1000);
