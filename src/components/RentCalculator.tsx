@@ -324,7 +324,8 @@ export default function RentCalculator() {
           {results ? (
             <div className="animate-fade-in space-y-6">
               {/* Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Rent Summary */}
+              <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
                   label="Annual Rent"
                   value={formatAED(results.calculation.annualRent)}
@@ -335,33 +336,39 @@ export default function RentCalculator() {
                   value={formatAED(results.calculation.monthlyRent)}
                   icon={<Calendar className="w-4 h-4" />}
                 />
-                {results.calculation.isCommercial && (
-                  <SummaryCard
-                    label="VAT (5%)"
-                    value={formatAED(results.calculation.vatAmount)}
-                    icon={<DollarSign className="w-4 h-4" />}
-                    highlight
-                  />
-                )}
-                {results.calculation.brokerFee > 0 && (
-                  <SummaryCard
-                    label="Broker Fee (5%)"
-                    value={formatAED(results.calculation.brokerFee)}
-                    icon={<DollarSign className="w-4 h-4" />}
-                    highlight
-                  />
-                )}
-                <SummaryCard
-                  label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
-                  value={formatAED(
-                    isCommercial
-                      ? (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountCommercial ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountCommercial ?? 0)
-                      : (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountResidential ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountResidential ?? 0)
-                  )}
-                  icon={<FileText className="w-4 h-4" />}
-                  highlight
-                />
               </div>
+
+              {/* Fees (separate from rent) */}
+              {(results.calculation.isCommercial || results.calculation.brokerFee > 0 || true) && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {results.calculation.isCommercial && (
+                    <SummaryCard
+                      label="VAT (5%)"
+                      value={formatAED(results.calculation.vatAmount)}
+                      icon={<DollarSign className="w-4 h-4" />}
+                      highlight
+                    />
+                  )}
+                  {results.calculation.brokerFee > 0 && (
+                    <SummaryCard
+                      label="Broker Fee (5%)"
+                      value={formatAED(results.calculation.brokerFee)}
+                      icon={<DollarSign className="w-4 h-4" />}
+                      highlight
+                    />
+                  )}
+                  <SummaryCard
+                    label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
+                    value={formatAED(
+                      isCommercial
+                        ? (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountCommercial ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountCommercial ?? 0)
+                        : (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountResidential ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountResidential ?? 0)
+                    )}
+                    icon={<FileText className="w-4 h-4" />}
+                    highlight
+                  />
+                </div>
+              )}
 
               {/* First Payment Highlight */}
               {results.calculation.isCommercial && (
