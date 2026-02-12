@@ -98,6 +98,27 @@ export type Database = {
         }
         Relationships: []
       }
+      tenant_broker_fees: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          tenant_name: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          tenant_name: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          tenant_name?: string
+        }
+        Relationships: []
+      }
       tenant_records: {
         Row: {
           annual_rent: number

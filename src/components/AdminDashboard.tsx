@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Users, Eye, Star, Wrench, TrendingUp, Calendar,
-  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail, Percent, Printer
+  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail, Percent, Printer, Plus, X
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord, getBrokerFee, setBrokerFee } from "@/utils/storage";
+import { getTenantBrokerFees, addTenantBrokerFee, removeTenantBrokerFee } from "@/utils/storage";
 import { printTenantPdf } from "@/utils/tenantPrint";
 import { printMaintenanceRequest } from "@/utils/maintenancePrint";
 import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
@@ -59,6 +61,15 @@ export default function AdminDashboard() {
     retry: false,
   });
 
+  const { data: tenantBrokerFees = [] } = useQuery({
+    queryKey: ["admin-tenant-broker-fees"],
+    queryFn: getTenantBrokerFees,
+    staleTime: 60_000,
+    retry: false,
+  });
+
+  const [newBrokerFeeTenant, setNewBrokerFeeTenant] = useState("");
+
   const rentIncreaseEnabled = rentIncreaseData?.enabled ?? false;
   const brokerFeeEnabled = brokerFeeData?.enabled ?? false;
 
@@ -88,6 +99,25 @@ export default function AdminDashboard() {
     await setBrokerFee(enabled);
     queryClient.invalidateQueries({ queryKey: ["admin-broker-fee"] });
     toast.success(enabled ? "5% broker fee activated" : "Broker fee deactivated");
+  };
+
+  const handleAddBrokerFeeTenant = async () => {
+    const name = newBrokerFeeTenant.trim();
+    if (!name) { toast.error("Enter a tenant name"); return; }
+    try {
+      await addTenantBrokerFee(name);
+      queryClient.invalidateQueries({ queryKey: ["admin-tenant-broker-fees"] });
+      setNewBrokerFeeTenant("");
+      toast.success(`Broker fee activated for ${name}`);
+    } catch { toast.error("Failed to add tenant"); }
+  };
+
+  const handleRemoveBrokerFeeTenant = async (id: string, name: string) => {
+    try {
+      await removeTenantBrokerFee(id);
+      queryClient.invalidateQueries({ queryKey: ["admin-tenant-broker-fees"] });
+      toast.success(`Broker fee removed for ${name}`);
+    } catch { toast.error("Failed to remove tenant"); }
   };
 
   const handleSignOut = async () => {
@@ -299,36 +329,52 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
 
-      {/* Broker Fee Toggle */}
+      {/* Broker Fee - Per Tenant */}
       <Card className="shadow-card animate-fade-in">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Percent className="w-5 h-5 text-primary" />
-            Broker Fee Setting
+            Broker Fee (Per Tenant)
+            <Badge variant="secondary" className="ml-auto">{tenantBrokerFees.length}</Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-base font-medium">Apply 5% Broker Fee</Label>
-              <p className="text-sm text-muted-foreground mt-1">
-                When enabled, a 5% broker fee will be applied to all rent calculations.
-              </p>
-            </div>
-            <Button 
-              onClick={() => handleBrokerFeeToggle(!brokerFeeEnabled)}
-              variant={brokerFeeEnabled ? "destructive" : "default"}
-              className="gap-2"
-            >
-              {brokerFeeEnabled ? "Deactivate Fee" : "Activate Fee"}
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Add tenant names to apply the 5% broker fee to their rent calculations only.
+          </p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Enter tenant name..."
+              value={newBrokerFeeTenant}
+              onChange={(e) => setNewBrokerFeeTenant(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleAddBrokerFeeTenant()}
+            />
+            <Button onClick={handleAddBrokerFeeTenant} className="gap-1 shrink-0">
+              <Plus className="w-4 h-4" /> Add
             </Button>
           </div>
-          {brokerFeeEnabled && (
-            <div className="mt-4 p-3 rounded-md bg-gold-subtle border border-gold/30">
-              <p className="text-sm font-medium text-accent-foreground flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
-                5% broker fee is currently active for all tenants.
-              </p>
+          {tenantBrokerFees.length > 0 && (
+            <div className="space-y-2 mt-2">
+              {tenantBrokerFees.map((t) => (
+                <div key={t.id} className="flex items-center justify-between p-3 rounded-md border bg-muted/30">
+                  <div>
+                    <p className="font-medium text-sm">{t.tenantName}</p>
+                    <p className="text-xs text-muted-foreground">Added {format(new Date(t.createdAt), "dd MMM yyyy")}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveBrokerFeeTenant(t.id, t.tenantName)}
+                  >
+                    <X className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+          {tenantBrokerFees.length === 0 && (
+            <div className="text-center py-4 text-sm text-muted-foreground">
+              No tenants have the broker fee applied yet.
             </div>
           )}
         </CardContent>
