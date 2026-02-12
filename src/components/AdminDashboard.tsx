@@ -7,11 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Users, Eye, Star, Wrench, TrendingUp, Calendar,
-  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail
+  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail, Percent, Printer
 } from "lucide-react";
 import * as XLSX from "xlsx";
-import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord } from "@/utils/storage";
+import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord, getBrokerFee, setBrokerFee } from "@/utils/storage";
 import { printTenantPdf } from "@/utils/tenantPrint";
+import { printMaintenanceRequest } from "@/utils/maintenancePrint";
 import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -51,7 +52,15 @@ export default function AdminDashboard() {
     retry: false,
   });
 
+  const { data: brokerFeeData } = useQuery({
+    queryKey: ["admin-broker-fee"],
+    queryFn: getBrokerFee,
+    staleTime: 60_000,
+    retry: false,
+  });
+
   const rentIncreaseEnabled = rentIncreaseData?.enabled ?? false;
+  const brokerFeeEnabled = brokerFeeData?.enabled ?? false;
 
   const handleRentIncreaseToggle = async (enabled: boolean) => {
     await setRentIncrease(enabled);
@@ -75,9 +84,36 @@ export default function AdminDashboard() {
     toast.success(`Request marked as ${status}`);
   };
 
+  const handleBrokerFeeToggle = async (enabled: boolean) => {
+    await setBrokerFee(enabled);
+    queryClient.invalidateQueries({ queryKey: ["admin-broker-fee"] });
+    toast.success(enabled ? "5% broker fee activated" : "Broker fee deactivated");
+  };
+
   const handleSignOut = async () => {
     await signOut();
     toast.success("Signed out");
+  };
+
+  const handleExportMaintenance = () => {
+    if (requests.length === 0) {
+      toast.error("No maintenance requests to export");
+      return;
+    }
+    const wb = XLSX.utils.book_new();
+    const rows = requests.map((r) => ({
+      "Tenant Name": r.tenantName,
+      "Company": r.companyName || "—",
+      "Building": r.building,
+      "Unit": r.unitNumber,
+      "Description": r.description,
+      "Priority": r.priority,
+      "Status": r.status,
+      "Submitted": format(new Date(r.submittedAt), "dd MMM yyyy, hh:mm a"),
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), "Maintenance Requests");
+    XLSX.writeFile(wb, `Maintenance_Report_${format(new Date(), "yyyy-MM-dd")}.xlsx`);
+    toast.success("Maintenance report downloaded");
   };
 
   const handleExportExcel = () => {
@@ -263,7 +299,34 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
 
-      {/* Tenant Records */}
+      {/* Broker Fee Toggle */}
+      <Card className="shadow-card animate-fade-in">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Percent className="w-5 h-5 text-primary" />
+            Broker Fee Setting
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-base font-medium">Apply 5% Broker Fee</Label>
+              <p className="text-sm text-muted-foreground mt-1">
+                When enabled, a 5% broker fee will be applied to all rent calculations.
+              </p>
+            </div>
+            <Switch checked={brokerFeeEnabled} onCheckedChange={handleBrokerFeeToggle} />
+          </div>
+          {brokerFeeEnabled && (
+            <div className="mt-4 p-3 rounded-md bg-gold-subtle border border-gold/30">
+              <p className="text-sm font-medium text-accent-foreground flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                5% broker fee is currently active for all tenants.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
       <Card className="shadow-card animate-fade-in">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -321,7 +384,12 @@ export default function AdminDashboard() {
           <CardTitle className="flex items-center gap-2">
             <Wrench className="w-5 h-5 text-primary" />
             Maintenance Requests
-            <Badge variant="secondary" className="ml-auto">{requests.length}</Badge>
+            <div className="ml-auto flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={handleExportMaintenance}>
+                <Download className="w-3 h-3 mr-1" /> Export
+              </Button>
+              <Badge variant="secondary">{requests.length}</Badge>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -342,26 +410,31 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <p className="text-sm">{req.description}</p>
-                  <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center justify-between pt-1 flex-wrap gap-2">
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       {format(new Date(req.submittedAt), "dd MMM yyyy, hh:mm a")}
                     </p>
-                    {req.status === "pending" && (
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => handleMaintenanceStatusChange(req.id, "in-progress")}>
-                          <Clock className="w-3 h-3 mr-1" /> In Progress
-                        </Button>
-                        <Button size="sm" onClick={() => handleMaintenanceStatusChange(req.id, "completed")}>
-                          <CheckCircle2 className="w-3 h-3 mr-1" /> Complete
-                        </Button>
-                      </div>
-                    )}
-                    {req.status === "in-progress" && (
-                      <Button size="sm" onClick={() => handleMaintenanceStatusChange(req.id, "completed")}>
-                        <CheckCircle2 className="w-3 h-3 mr-1" /> Mark Complete
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="ghost" onClick={() => printMaintenanceRequest(req)} title="Print Request">
+                        <Printer className="w-3 h-3 mr-1" /> Print
                       </Button>
-                    )}
+                      {req.status === "pending" && (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => handleMaintenanceStatusChange(req.id, "in-progress")}>
+                            <Clock className="w-3 h-3 mr-1" /> In Progress
+                          </Button>
+                          <Button size="sm" onClick={() => handleMaintenanceStatusChange(req.id, "completed")}>
+                            <CheckCircle2 className="w-3 h-3 mr-1" /> Complete
+                          </Button>
+                        </>
+                      )}
+                      {req.status === "in-progress" && (
+                        <Button size="sm" onClick={() => handleMaintenanceStatusChange(req.id, "completed")}>
+                          <CheckCircle2 className="w-3 h-3 mr-1" /> Mark Complete
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
