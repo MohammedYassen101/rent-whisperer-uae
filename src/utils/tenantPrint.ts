@@ -155,7 +155,11 @@ export function printTenantPdf(record: TenantRecord): void {
             ${scheduleRows}
             <tr class="total-row">
               <td colspan="4">Total</td>
-              <td class="amount">${fmtAED(totalRent)}</td>
+              <td class="amount">
+                <strong>${fmtAED(totalRent)}</strong>
+                <div class="amount-words">${numberToWordsEn(totalRent)}</div>
+                <div class="amount-words" style="direction:rtl;text-align:right;">${numberToWordsAr(totalRent)}</div>
+              </td>
             </tr>
           </tbody>
         </table>
