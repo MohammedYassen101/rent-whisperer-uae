@@ -187,3 +187,38 @@ export async function applyRentIncrease(baseRent: number): Promise<number> {
   }
   return baseRent;
 }
+
+// App Settings (broker fee)
+export async function getBrokerFee(): Promise<{ enabled: boolean; percentage: number }> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", "broker_fee")
+    .maybeSingle();
+  if (data?.value) {
+    const val = data.value as { enabled: boolean; percentage: number };
+    return { enabled: val.enabled ?? false, percentage: val.percentage ?? 5 };
+  }
+  return { enabled: false, percentage: 5 };
+}
+
+export async function setBrokerFee(enabled: boolean, percentage: number = 5): Promise<void> {
+  const { data: existing } = await supabase
+    .from("app_settings")
+    .select("id")
+    .eq("key", "broker_fee")
+    .maybeSingle();
+
+  if (existing) {
+    const { error } = await supabase
+      .from("app_settings")
+      .update({ value: { enabled, percentage }, updated_at: new Date().toISOString() })
+      .eq("key", "broker_fee");
+    if (error) throw error;
+  } else {
+    const { error } = await supabase
+      .from("app_settings")
+      .insert({ key: "broker_fee", value: { enabled, percentage } });
+    if (error) throw error;
+  }
+}
