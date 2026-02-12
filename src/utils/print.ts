@@ -12,6 +12,8 @@ interface PrintData {
   monthlyRent: number;
   vatAmount: number;
   brokerFee: number;
+  adminFee: number;
+  adminFeeLabel: string;
   numPayments: number;
   schedule: PaymentScheduleItem[];
   fees: Fee[];
@@ -157,6 +159,10 @@ export function printReceipt(data: PrintData): void {
           </div>`
             : ""
         }
+        <div class="highlight-box" style="margin-top:8px;">
+          <div class="label">${escapeHtml(data.adminFeeLabel)}</div>
+          <div class="value">${formatAED(data.adminFee)}</div>
+        </div>
       </div>
 
       <div class="section">

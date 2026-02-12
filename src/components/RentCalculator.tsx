@@ -116,6 +116,16 @@ export default function RentCalculator() {
     const leaseStart = new Date(leaseStartDate);
     const leaseEnd = addMonths(leaseStart, 12);
 
+    const adminFeeItem = leaseType === "new"
+      ? fees.find(f => f.id === "new-lease")
+      : fees.find(f => f.id === "lease-renewal");
+    const adminFee = adminFeeItem
+      ? (isCommercial ? adminFeeItem.amountCommercial : adminFeeItem.amountResidential)
+      : 0;
+    const adminFeeLabel = leaseType === "new"
+      ? "New Lease Administration Fee"
+      : "Renewal Administration Fee";
+
     printReceipt({
       tenantName,
       companyName,
@@ -127,6 +137,8 @@ export default function RentCalculator() {
       monthlyRent: results.calculation.monthlyRent,
       vatAmount: results.calculation.vatAmount,
       brokerFee: results.calculation.brokerFee,
+      adminFee,
+      adminFeeLabel,
       numPayments: results.calculation.numPayments,
       schedule: results.schedule,
       fees,
@@ -339,6 +351,16 @@ export default function RentCalculator() {
                     highlight
                   />
                 )}
+                <SummaryCard
+                  label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
+                  value={formatAED(
+                    isCommercial
+                      ? (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountCommercial ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountCommercial ?? 0)
+                      : (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountResidential ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountResidential ?? 0)
+                  )}
+                  icon={<FileText className="w-4 h-4" />}
+                  highlight
+                />
               </div>
 
               {/* First Payment Highlight */}
