@@ -142,6 +142,10 @@ export function printReceipt(data: PrintData): void {
             <div class="label">Monthly Rent</div>
             <div class="value">${formatAED(data.monthlyRent)}</div>
           </div>
+          <div class="summary-card">
+            <div class="label">${escapeHtml(data.adminFeeLabel)}</div>
+            <div class="value">${formatAED(data.adminFee)}</div>
+          </div>
         </div>
         ${
           data.vatAmount > 0
@@ -159,10 +163,6 @@ export function printReceipt(data: PrintData): void {
           </div>`
             : ""
         }
-        <div class="highlight-box" style="margin-top:8px;">
-          <div class="label">${escapeHtml(data.adminFeeLabel)}</div>
-          <div class="value">${formatAED(data.adminFee)}</div>
-        </div>
       </div>
 
       <div class="section">
