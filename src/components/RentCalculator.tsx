@@ -80,15 +80,17 @@ export default function RentCalculator() {
       }
     }
 
-    // Check if tenant has broker fee
+    // Check if tenant has broker fee (only for new leases)
     let hasBrokerFee = false;
-    try {
-      const brokerTenants = await getTenantBrokerFees();
-      hasBrokerFee = brokerTenants.some(
-        (t) => t.tenantName.toLowerCase().trim() === tenantName.toLowerCase().trim()
-      );
-    } catch {
-      // If fetch fails, proceed without broker fee
+    if (leaseType === "new") {
+      try {
+        const brokerTenants = await getTenantBrokerFees();
+        hasBrokerFee = brokerTenants.some(
+          (t) => t.tenantName.toLowerCase().trim() === tenantName.toLowerCase().trim()
+        );
+      } catch {
+        // If fetch fails, proceed without broker fee
+      }
     }
 
     const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
