@@ -222,3 +222,33 @@ export async function setBrokerFee(enabled: boolean, percentage: number = 5): Pr
     if (error) throw error;
   }
 }
+
+// Tenant Broker Fees (per-tenant)
+export async function getTenantBrokerFees(): Promise<{ id: string; tenantName: string; createdAt: string }[]> {
+  const { data, error } = await supabase
+    .from("tenant_broker_fees")
+    .select("*")
+    .eq("enabled", true)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    tenantName: r.tenant_name,
+    createdAt: r.created_at,
+  }));
+}
+
+export async function addTenantBrokerFee(tenantName: string): Promise<void> {
+  const { error } = await supabase
+    .from("tenant_broker_fees")
+    .upsert({ tenant_name: tenantName, enabled: true }, { onConflict: "tenant_name" });
+  if (error) throw error;
+}
+
+export async function removeTenantBrokerFee(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("tenant_broker_fees")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
