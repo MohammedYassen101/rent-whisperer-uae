@@ -137,6 +137,14 @@ export function printTenantPdf(record: TenantRecord): void {
           </div>`
             : ""
         }
+        ${
+          calculation.brokerFee > 0
+            ? `<div class="highlight-box" style="margin-top:8px;">
+            <div class="label">Broker Fee (5% of Annual Rent)</div>
+            <div class="value">${fmtAED(calculation.brokerFee)}</div>
+          </div>`
+            : ""
+        }
       </div>
 
       <div class="section">
