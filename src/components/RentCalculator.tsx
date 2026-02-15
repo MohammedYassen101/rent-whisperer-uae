@@ -10,7 +10,7 @@ import { Calculator, Printer, Building2, DollarSign, Calendar, FileText } from "
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
-import { saveTenantRecord, getTenantBrokerFees, getRentIncrease } from "@/utils/storage";
+import { saveTenantRecord, getRentIncrease } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
 import { RentCalculation, PaymentScheduleItem } from "@/types/rent";
 import { addMonths, format } from "date-fns";
@@ -80,18 +80,8 @@ export default function RentCalculator() {
       }
     }
 
-    // Check if tenant has broker fee (only for new leases)
-    let hasBrokerFee = false;
-    if (leaseType === "new") {
-      try {
-        const brokerTenants = await getTenantBrokerFees();
-        hasBrokerFee = brokerTenants.some(
-          (t) => t.tenantName.toLowerCase().trim() === tenantName.toLowerCase().trim()
-        );
-      } catch {
-        // If fetch fails, proceed without broker fee
-      }
-    }
+    // Apply broker fee to all new leases
+    const hasBrokerFee = leaseType === "new";
 
     const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
     const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
