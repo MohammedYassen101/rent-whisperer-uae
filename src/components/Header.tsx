@@ -14,6 +14,7 @@ const navKeys = [
 export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { language, toggleLanguage, t } = useLanguage();
 
   return (
     <>
@@ -39,7 +40,7 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => {
+              {navKeys.map((item) => {
                 const isActive = location.pathname === item.to;
                 const Icon = item.icon;
                 return (
@@ -56,20 +57,39 @@ export default function Header() {
                     `}
                   >
                     <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                   </Link>
                 );
               })}
+
+              {/* Language Toggle - Desktop */}
+              <button
+                onClick={toggleLanguage}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold transition-all duration-200 bg-accent/15 text-accent-foreground hover:bg-accent/25 border border-accent/30 ms-2"
+                aria-label="Toggle language"
+              >
+                <Globe className="w-4 h-4" />
+                <span>{language === "en" ? "عربي" : "EN"}</span>
+              </button>
             </nav>
 
-            {/* Mobile hamburger */}
-            <button
-              className="md:hidden p-2 rounded-md hover:bg-secondary transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile: Language + Hamburger */}
+            <div className="md:hidden flex items-center gap-1">
+              <button
+                onClick={toggleLanguage}
+                className="p-2 rounded-md bg-accent/15 text-accent-foreground hover:bg-accent/25 border border-accent/30 transition-colors text-xs font-bold"
+                aria-label="Toggle language"
+              >
+                {language === "en" ? "عربي" : "EN"}
+              </button>
+              <button
+                className="p-2 rounded-md hover:bg-secondary transition-colors"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -77,7 +97,7 @@ export default function Header() {
         {mobileMenuOpen && (
           <nav className="md:hidden border-t border-border bg-white animate-fade-in">
             <div className="container mx-auto px-4 py-2 space-y-1">
-              {navItems.map((item) => {
+              {navKeys.map((item) => {
                 const isActive = location.pathname === item.to;
                 const Icon = item.icon;
                 return (
@@ -95,7 +115,7 @@ export default function Header() {
                     `}
                   >
                     <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                   </Link>
                 );
               })}
