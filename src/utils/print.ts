@@ -13,6 +13,7 @@ interface PrintData {
   monthlyRent: number;
   vatAmount: number;
   brokerFee: number;
+  securityDeposit: number;
   adminFee: number;
   adminFeeLabel: string;
   numPayments: number;
@@ -168,6 +169,10 @@ export function printReceipt(data: PrintData): void {
           </div>`
             : ""
         }
+        <div class="highlight-box" style="margin-top:8px;">
+          <div class="label">Security Deposit (5% of Annual Rent) / التأمين</div>
+          <div class="value">${formatAED(data.securityDeposit)}</div>
+        </div>
       </div>
 
       <div class="section">

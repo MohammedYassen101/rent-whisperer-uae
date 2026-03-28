@@ -350,6 +350,12 @@ export default function RentCalculator() {
                     />
                   )}
                   <SummaryCard
+                    label="Security Deposit (5%)"
+                    value={formatAED(results.calculation.securityDeposit)}
+                    icon={<DollarSign className="w-4 h-4" />}
+                    highlight
+                  />
+                  <SummaryCard
                     label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
                     value={formatAED(
                       isCommercial
