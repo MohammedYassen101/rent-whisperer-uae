@@ -323,10 +323,10 @@ export default function AdminDashboard() {
                        <td className="py-2.5 px-3 text-muted-foreground">{format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a")}</td>
                        <td className="py-2.5 px-3 text-center">
                           <div className="flex items-center justify-center gap-1">
-                            <Button size="sm" variant="ghost" onClick={() => printTenantPdf(r)} title="Download PDF">
+                            <Button size="sm" variant="ghost" onClick={() => printTenantPdf(r)} title="Download PDF" className="text-red-600 hover:text-red-700 hover:bg-red-50">
                               <FileText className="w-4 h-4" />
                             </Button>
-                            <Button size="sm" variant="ghost" onClick={() => exportDocxFromRecord(r)} title="Download Word">
+                            <Button size="sm" variant="ghost" onClick={() => exportDocxFromRecord(r)} title="Download Word" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                               <FileDown className="w-4 h-4" />
                             </Button>
                             <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteTenant(r.id)} title="Delete">
