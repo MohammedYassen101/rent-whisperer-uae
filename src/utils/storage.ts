@@ -159,11 +159,16 @@ export async function getTenantRecords() {
 
 // App Settings (rent increase)
 export async function getRentIncrease(): Promise<{ enabled: boolean; percentage: number }> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("app_settings")
     .select("value")
     .eq("key", "rent_increase")
     .maybeSingle();
+  if (error) {
+    // If not authenticated, return safe defaults
+    console.warn("Could not read app_settings (may require authentication)");
+    return { enabled: false, percentage: 5 };
+  }
   if (data?.value) {
     const val = data.value as { enabled: boolean; percentage: number };
     return { enabled: val.enabled ?? false, percentage: val.percentage ?? 5 };
@@ -190,11 +195,15 @@ export async function applyRentIncrease(baseRent: number): Promise<number> {
 
 // App Settings (broker fee)
 export async function getBrokerFee(): Promise<{ enabled: boolean; percentage: number }> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("app_settings")
     .select("value")
     .eq("key", "broker_fee")
     .maybeSingle();
+  if (error) {
+    console.warn("Could not read broker_fee setting (may require authentication)");
+    return { enabled: false, percentage: 5 };
+  }
   if (data?.value) {
     const val = data.value as { enabled: boolean; percentage: number };
     return { enabled: val.enabled ?? false, percentage: val.percentage ?? 5 };
