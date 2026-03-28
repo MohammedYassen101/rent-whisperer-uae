@@ -129,6 +129,7 @@ export default function RentCalculator() {
       monthlyRent: results.calculation.monthlyRent,
       vatAmount: results.calculation.vatAmount,
       brokerFee: results.calculation.brokerFee,
+      securityDeposit: results.calculation.securityDeposit,
       adminFee,
       adminFeeLabel,
       numPayments: results.calculation.numPayments,
