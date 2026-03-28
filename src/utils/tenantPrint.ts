@@ -145,6 +145,10 @@ export function printTenantPdf(record: TenantRecord): void {
           </div>`
             : ""
         }
+        <div class="highlight-box" style="margin-top:8px;">
+          <div class="label">Security Deposit (5% of Annual Rent) / التأمين</div>
+          <div class="value">${fmtAED(calculation.securityDeposit)}</div>
+        </div>
       </div>
 
       <div class="section">
