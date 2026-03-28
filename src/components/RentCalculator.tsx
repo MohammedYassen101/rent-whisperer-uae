@@ -129,6 +129,7 @@ export default function RentCalculator() {
       monthlyRent: results.calculation.monthlyRent,
       vatAmount: results.calculation.vatAmount,
       brokerFee: results.calculation.brokerFee,
+      securityDeposit: results.calculation.securityDeposit,
       adminFee,
       adminFeeLabel,
       numPayments: results.calculation.numPayments,
@@ -349,6 +350,12 @@ export default function RentCalculator() {
                       highlight
                     />
                   )}
+                  <SummaryCard
+                    label="Security Deposit (5%)"
+                    value={formatAED(results.calculation.securityDeposit)}
+                    icon={<DollarSign className="w-4 h-4" />}
+                    highlight
+                  />
                   <SummaryCard
                     label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
                     value={formatAED(

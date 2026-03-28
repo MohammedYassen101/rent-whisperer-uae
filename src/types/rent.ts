@@ -35,6 +35,7 @@ export interface RentCalculation {
   numPayments: number;
   isCommercial: boolean;
   brokerFee: number;
+  securityDeposit: number;
 }
 
 export interface PaymentScheduleItem {
