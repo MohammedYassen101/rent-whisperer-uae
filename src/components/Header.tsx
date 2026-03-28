@@ -1,13 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { Calculator, Wrench, Phone, ShieldCheck, Menu, X } from "lucide-react";
+import { Calculator, Wrench, Phone, ShieldCheck, Menu, X, Globe } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const navItems = [
-  { to: "/", label: "Calculator", icon: Calculator },
-  { to: "/maintenance", label: "Maintenance", icon: Wrench },
-  { to: "/contact", label: "Contact", icon: Phone },
-  { to: "/admin", label: "Admin", icon: ShieldCheck },
+const navKeys = [
+  { to: "/", labelKey: "nav.calculator", icon: Calculator },
+  { to: "/maintenance", labelKey: "nav.maintenance", icon: Wrench },
+  { to: "/contact", labelKey: "nav.contact", icon: Phone },
+  { to: "/admin", labelKey: "nav.admin", icon: ShieldCheck },
 ];
 
 export default function Header() {
