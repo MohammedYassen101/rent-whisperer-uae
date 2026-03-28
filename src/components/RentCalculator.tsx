@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Calculator, Printer, Building2, DollarSign, Calendar, FileText } from "lucide-react";
+import { Calculator, Printer, Building2, DollarSign, Calendar, FileText, FileDown } from "lucide-react";
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
 import { saveTenantRecord, getRentIncrease } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
+import { exportDocx } from "@/utils/docxExport";
 import { RentCalculation, PaymentScheduleItem } from "@/types/rent";
 import { addMonths, format } from "date-fns";
 import PaymentSchedule from "./PaymentSchedule";
@@ -423,11 +424,33 @@ export default function RentCalculator() {
                 </CardContent>
               </Card>
 
-              {/* Print Button */}
-              <Button onClick={handlePrint} size="lg" variant="outline" className="w-full">
-                <Printer className="w-4 h-4 mr-2" />
-                Print / Save as PDF
-              </Button>
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button onClick={handlePrint} size="lg" variant="outline" className="flex-1">
+                  <Printer className="w-4 h-4 mr-2" />
+                  Print / PDF
+                </Button>
+                <Button onClick={() => {
+                  if (!results || !selectedBuilding || !selectedUnit) return;
+                  const leaseStart = new Date(leaseStartDate);
+                  const leaseEnd = addMonths(leaseStart, 12);
+                  const adminFeeItem = leaseType === "new" ? fees.find(f => f.id === "new-lease") : fees.find(f => f.id === "lease-renewal");
+                  const adminFee = adminFeeItem ? (isCommercial ? adminFeeItem.amountCommercial : adminFeeItem.amountResidential) : 0;
+                  const adminFeeLabel = leaseType === "new" ? "New Lease Administration Fee" : "Renewal Administration Fee";
+                  exportDocx({
+                    tenantName, companyName, buildingName: selectedBuilding.name, unitNumber: selectedUnit.unitNumber,
+                    unitType: selectedUnit.type, area: selectedUnit.area, annualRent: results.calculation.annualRent,
+                    monthlyRent: results.calculation.monthlyRent, vatAmount: results.calculation.vatAmount,
+                    brokerFee: results.calculation.brokerFee, securityDeposit: results.calculation.securityDeposit,
+                    adminFee, adminFeeLabel, numPayments: results.calculation.numPayments,
+                    schedule: results.schedule, fees, leaseStartDate: format(leaseStart, "dd MMM yyyy"),
+                    leaseEndDate: format(leaseEnd, "dd MMM yyyy"), leaseType: leaseType === "new" ? "New Lease" : "Renewal", isCommercial,
+                  });
+                }} size="lg" variant="outline" className="flex-1">
+                  <FileDown className="w-4 h-4 mr-2" />
+                  Download Word
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center animate-fade-in">
