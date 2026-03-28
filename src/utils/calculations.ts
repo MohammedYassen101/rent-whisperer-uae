@@ -10,6 +10,7 @@ export function calculateRent(
   const vatRate = isCommercial ? 0.05 : 0;
   const vatAmount = annualRent * vatRate;
   const brokerFee = hasBrokerFee ? annualRent * 0.05 : 0;
+  const securityDeposit = annualRent * 0.05;
   const paymentAmount = annualRent / numPayments;
   const firstPayment = paymentAmount + vatAmount;
 
@@ -24,6 +25,7 @@ export function calculateRent(
     numPayments,
     isCommercial,
     brokerFee,
+    securityDeposit,
   };
 }
 
