@@ -288,3 +288,44 @@ export async function exportDocx(data: DocxData): Promise<void> {
   const fileName = `Rent_Statement_${data.tenantName.replace(/\s+/g, "_")}_${format(new Date(), "yyyyMMdd")}.docx`;
   saveAs(buffer, fileName);
 }
+
+// Export DOCX from a TenantRecord (used in admin dashboard)
+export async function exportDocxFromRecord(record: { tenantName: string; companyName: string; buildingName: string; unitNumber: string; unitType: string; annualRent: number; calculatedAt: string }): Promise<void> {
+  const { calculateRent, generatePaymentSchedule } = await import("@/utils/calculations");
+  const { fees } = await import("@/data/fees");
+  const { addMonths } = await import("date-fns");
+
+  const isCommercial = ["Office", "Showroom", "Shop"].includes(record.unitType);
+  const numPayments = 4;
+  const leaseStart = new Date(record.calculatedAt);
+  const leaseEnd = addMonths(leaseStart, 12);
+
+  const calculation = calculateRent(record.annualRent, numPayments, isCommercial);
+  const schedule = generatePaymentSchedule(leaseStart, numPayments, calculation);
+
+  const adminFee = fees.find((f) => f.id === "admin");
+  const adminFeeAmount = adminFee ? (isCommercial ? adminFee.amountCommercial : adminFee.amountResidential) : 0;
+  const adminFeeLabel = adminFee?.name || "Admin Fee";
+
+  await exportDocx({
+    tenantName: record.tenantName,
+    companyName: record.companyName || "",
+    buildingName: record.buildingName,
+    unitNumber: record.unitNumber,
+    unitType: record.unitType,
+    annualRent: record.annualRent,
+    monthlyRent: calculation.monthlyRent,
+    vatAmount: calculation.vatAmount,
+    brokerFee: calculation.brokerFee,
+    securityDeposit: calculation.securityDeposit,
+    adminFee: adminFeeAmount,
+    adminFeeLabel,
+    numPayments,
+    schedule,
+    fees,
+    leaseStartDate: format(leaseStart, "dd MMM yyyy"),
+    leaseEndDate: format(leaseEnd, "dd MMM yyyy"),
+    leaseType: isCommercial ? "Commercial" : "Residential",
+    isCommercial,
+  });
+}
