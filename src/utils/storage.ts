@@ -164,6 +164,11 @@ export async function getRentIncrease(): Promise<{ enabled: boolean; percentage:
     .select("value")
     .eq("key", "rent_increase")
     .maybeSingle();
+  if (error) {
+    // If not authenticated, return safe defaults
+    console.warn("Could not read app_settings (may require authentication)");
+    return { enabled: false, percentage: 5 };
+  }
   if (data?.value) {
     const val = data.value as { enabled: boolean; percentage: number };
     return { enabled: val.enabled ?? false, percentage: val.percentage ?? 5 };
