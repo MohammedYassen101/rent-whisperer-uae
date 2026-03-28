@@ -182,6 +182,10 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
+      validate_text_input: {
+        Args: { input: string; max_length: number }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"
