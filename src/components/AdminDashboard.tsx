@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Users, Eye, Star, Wrench, TrendingUp, Calendar,
-  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail, Printer
+  AlertCircle, CheckCircle2, Clock, LogOut, Download, Trash2, FileText, Mail, Printer, FileDown
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord } from "@/utils/storage";
@@ -322,14 +322,17 @@ export default function AdminDashboard() {
                        <td className="py-2.5 px-3 text-center"><Badge variant="secondary">{r.visitCount}</Badge></td>
                        <td className="py-2.5 px-3 text-muted-foreground">{format(new Date(r.lastVisit), "dd MMM yyyy, hh:mm a")}</td>
                        <td className="py-2.5 px-3 text-center">
-                         <div className="flex items-center justify-center gap-1">
-                           <Button size="sm" variant="ghost" onClick={() => printTenantPdf(r)} title="Download PDF">
-                             <FileText className="w-4 h-4" />
-                           </Button>
-                           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteTenant(r.id)} title="Delete">
-                             <Trash2 className="w-4 h-4" />
-                           </Button>
-                         </div>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button size="sm" variant="ghost" onClick={() => printTenantPdf(r)} title="Download PDF">
+                              <FileText className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => exportDocxFromRecord(r)} title="Download Word">
+                              <FileDown className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteTenant(r.id)} title="Delete">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                        </td>
                      </tr>
                    ))}
