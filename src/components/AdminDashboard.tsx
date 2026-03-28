@@ -14,6 +14,7 @@ import * as XLSX from "xlsx";
 import { getTenantRecords, getMaintenanceRequests, getFeedback, getRentIncrease, setRentIncrease, updateMaintenanceStatus, deleteTenantRecord } from "@/utils/storage";
 import { printTenantPdf } from "@/utils/tenantPrint";
 import { printMaintenanceRequest } from "@/utils/maintenancePrint";
+import { exportDocxFromRecord } from "@/utils/docxExport";
 import { TenantRecord, MaintenanceRequest, TenantFeedback } from "@/types/rent";
 import { format } from "date-fns";
 import { toast } from "sonner";
