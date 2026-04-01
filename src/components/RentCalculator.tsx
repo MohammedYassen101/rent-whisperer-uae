@@ -167,10 +167,10 @@ export default function RentCalculator() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="tenantName">Tenant Name *</Label>
+              <Label htmlFor="tenantName">{t("calc.tenantName")} *</Label>
               <Input
                 id="tenantName"
-                placeholder="Enter full name"
+                placeholder={t("calc.enterName")}
                 value={tenantName}
                 onChange={(e) => setTenantName(e.target.value)}
                 maxLength={100}
