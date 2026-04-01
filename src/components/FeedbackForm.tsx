@@ -8,8 +8,10 @@ import { Star, Send } from "lucide-react";
 import { saveFeedback } from "@/utils/storage";
 import { toast } from "sonner";
 import { feedbackSchema } from "@/utils/validation";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FeedbackForm() {
+  const { t } = useLanguage();
   const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [rating, setRating] = useState(0);
@@ -32,7 +34,7 @@ export default function FeedbackForm() {
 
     try {
       await saveFeedback(result.data as Required<typeof result.data>);
-      toast.success("Thank you for your feedback!");
+      toast.success(t("feedback.success"));
       setTenantName("");
       setCompanyName("");
       setRating(0);
@@ -45,24 +47,24 @@ export default function FeedbackForm() {
   return (
     <Card className="shadow-card">
       <CardHeader>
-        <CardTitle className="text-base">Rate Your Experience</CardTitle>
+        <CardTitle className="text-base">{t("feedback.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Your Name *</Label>
+              <Label>{t("feedback.name")} *</Label>
               <Input
-                placeholder="Tenant name"
+                placeholder={t("feedback.namePlaceholder")}
                 value={tenantName}
                 onChange={(e) => setTenantName(e.target.value)}
                 maxLength={100}
               />
             </div>
             <div className="space-y-2">
-              <Label>Company</Label>
+              <Label>{t("feedback.company")}</Label>
               <Input
-                placeholder="Company name"
+                placeholder={t("feedback.companyPlaceholder")}
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 maxLength={100}
@@ -71,7 +73,7 @@ export default function FeedbackForm() {
           </div>
 
           <div className="space-y-2">
-            <Label>Rating *</Label>
+            <Label>{t("feedback.rating")} *</Label>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -95,9 +97,9 @@ export default function FeedbackForm() {
           </div>
 
           <div className="space-y-2">
-            <Label>Comments</Label>
+            <Label>{t("feedback.comment")}</Label>
             <Textarea
-              placeholder="Share your experience..."
+              placeholder={t("feedback.placeholder")}
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -106,8 +108,8 @@ export default function FeedbackForm() {
           </div>
 
           <Button type="submit" size="sm" className="w-full">
-            <Send className="w-3.5 h-3.5 mr-1.5" />
-            Submit Feedback
+            <Send className="w-3.5 h-3.5 me-1.5" />
+            {t("feedback.submit")}
           </Button>
         </form>
       </CardContent>
