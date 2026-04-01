@@ -414,7 +414,7 @@ export default function RentCalculator() {
                               <div className="font-medium">{fee.name}</div>
                               <div className="text-xs text-muted-foreground">{fee.description}</div>
                             </td>
-                            <td className="py-2.5 px-3 text-right font-semibold tabular-nums">
+                            <td className="py-2.5 px-3 text-end font-semibold tabular-nums">
                               {formatAED(isCommercial ? fee.amountCommercial : fee.amountResidential)}
                             </td>
                           </tr>
