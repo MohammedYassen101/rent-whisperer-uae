@@ -266,7 +266,7 @@ export default function RentCalculator() {
 
             <div>
               <div className="space-y-2">
-                <Label htmlFor="annualRent">Old Annual Rent (AED) *</Label>
+                <Label htmlFor="annualRent">{t("calc.oldAnnualRent")} *</Label>
                 <Input
                   id="annualRent"
                   type="number"
@@ -275,7 +275,7 @@ export default function RentCalculator() {
                   onChange={(e) => setAnnualRent(parseFloat(e.target.value) || 0)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Enter the current rent — a 5% increase will be applied automatically.
+                  {t("calc.rentHint")}
                 </p>
               </div>
             </div>
