@@ -2,16 +2,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { User, Mail, Phone, MapPin, Building2, Wrench } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ContactInfo() {
+  const { t } = useLanguage();
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-          Contact Us
+          {t("contact.title")}
         </h2>
         <p className="text-muted-foreground">
-          Get in touch with our leasing team for any inquiries.
+          {t("contact.subtitle")}
         </p>
       </div>
 
@@ -19,7 +22,7 @@ export default function ContactInfo() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="w-5 h-5 text-primary" />
-            Leasing Executive
+            {t("contact.leasingExec")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -32,7 +35,7 @@ export default function ContactInfo() {
                 Mohamed Abdelhamid Yassen
               </h3>
               <p className="text-sm text-muted-foreground">
-                Leasing Executive — Alyassia Properties L.L.C.
+                {t("contact.leasingExecRole")}
               </p>
             </div>
           </div>
@@ -42,25 +45,25 @@ export default function ContactInfo() {
           <div className="space-y-3">
             <ContactItem
               icon={<Mail className="w-4 h-4" />}
-              label="Email"
+              label={t("contact.email")}
               value="mohamed.yassen@alyassiaproperties.ae"
               href="mailto:mohamed.yassen@alyassiaproperties.ae"
             />
             <ContactItem
               icon={<Phone className="w-4 h-4" />}
-              label="Customer Service"
+              label={t("contact.customerService")}
               value="+971 2 667 3444"
               href="tel:+97126673444"
             />
             <ContactItem
               icon={<Phone className="w-4 h-4" />}
-              label="Mobile"
+              label={t("contact.mobile")}
               value="+971 54 220 2683"
               href="tel:+971542202683"
             />
             <ContactItem
               icon={<Wrench className="w-4 h-4" />}
-              label="Maintenance Email"
+              label={t("contact.maintEmail")}
               value="info@alyassiaproperties.ae"
               href="mailto:info@alyassiaproperties.ae"
             />
@@ -71,7 +74,7 @@ export default function ContactInfo() {
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
             <div>
-              <p className="font-medium text-sm">Office Address</p>
+              <p className="font-medium text-sm">{t("contact.office")}</p>
               <p className="text-sm text-muted-foreground">
                 Omniah Tower, Mezzanine floor, 28 Al Bahhar St,
                 <br />
@@ -83,14 +86,14 @@ export default function ContactInfo() {
           <div className="grid grid-cols-2 gap-3 pt-2">
             <Button asChild variant="outline" className="w-full">
               <a href="tel:+97126673444">
-                <Phone className="w-4 h-4 mr-2" />
-                Call Us
+                <Phone className="w-4 h-4 me-2" />
+                {t("contact.callUs")}
               </a>
             </Button>
             <Button asChild className="w-full">
               <a href="mailto:mohamed.yassen@alyassiaproperties.ae">
-                <Mail className="w-4 h-4 mr-2" />
-                Email Us
+                <Mail className="w-4 h-4 me-2" />
+                {t("contact.emailUs")}
               </a>
             </Button>
           </div>

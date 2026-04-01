@@ -19,8 +19,10 @@ import PaymentSchedule from "./PaymentSchedule";
 import UnitSearchSelect from "./UnitSearchSelect";
 import { toast } from "sonner";
 import { rentCalculatorSchema } from "@/utils/validation";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function RentCalculator() {
+  const { t } = useLanguage();
   const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [contractType, setContractType] = useState<string>("");
@@ -100,7 +102,7 @@ export default function RentCalculator() {
       calculatedAt: new Date().toISOString(),
     }).catch(() => {});
 
-    toast.success("Rent calculated successfully!");
+    toast.success(t("calc.success"));
   };
 
   const handlePrint = () => {
@@ -148,10 +150,10 @@ export default function RentCalculator() {
       {/* Hero */}
       <div className="text-center space-y-2 animate-fade-in">
         <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-          Rent Calculator
+          {t("calc.title")}
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Calculate your commercial or residential rent, view payment schedules, and download a detailed statement.
+          {t("calc.subtitle")}
         </p>
       </div>
 
@@ -161,15 +163,15 @@ export default function RentCalculator() {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Building2 className="w-5 h-5 text-primary" />
-              Tenant Details
+              {t("calc.tenantDetails")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="tenantName">Tenant Name *</Label>
+              <Label htmlFor="tenantName">{t("calc.tenantName")} *</Label>
               <Input
                 id="tenantName"
-                placeholder="Enter full name"
+                placeholder={t("calc.enterName")}
                 value={tenantName}
                 onChange={(e) => setTenantName(e.target.value)}
                 maxLength={100}
@@ -178,30 +180,30 @@ export default function RentCalculator() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Contract Type *</Label>
+                <Label>{t("calc.contractType")} *</Label>
                 <Select value={contractType} onValueChange={(val) => {
                   setContractType(val);
                   if (val !== "commercial") setCompanyName("");
                 }}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder={t("calc.selectType")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="commercial">Commercial</SelectItem>
-                    <SelectItem value="residential">Residential</SelectItem>
+                    <SelectItem value="commercial">{t("calc.commercial")}</SelectItem>
+                    <SelectItem value="residential">{t("calc.residential")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Lease Type *</Label>
+                <Label>{t("calc.leaseType")} *</Label>
                 <Select value={leaseType} onValueChange={setLeaseType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select lease" />
+                    <SelectValue placeholder={t("calc.selectLease")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">New Lease</SelectItem>
-                    <SelectItem value="renewal">Renewal</SelectItem>
+                    <SelectItem value="new">{t("calc.newLease")}</SelectItem>
+                    <SelectItem value="renewal">{t("calc.renewal")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -209,10 +211,10 @@ export default function RentCalculator() {
 
             {isCommercial && (
               <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
+                <Label htmlFor="companyName">{t("calc.companyName")}</Label>
                 <Input
                   id="companyName"
-                  placeholder="Enter company name"
+                  placeholder={t("calc.enterCompany")}
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   maxLength={100}
@@ -223,10 +225,10 @@ export default function RentCalculator() {
             <Separator />
 
             <div className="space-y-2">
-              <Label>Building *</Label>
+              <Label>{t("calc.building")} *</Label>
               <Select value={buildingId} onValueChange={setBuildingId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select building" />
+                  <SelectValue placeholder={t("calc.selectBuilding")} />
                 </SelectTrigger>
                 <SelectContent>
                   {buildings.map((b) => (
@@ -239,7 +241,7 @@ export default function RentCalculator() {
             </div>
 
             <div className="space-y-2">
-              <Label>Unit Number *</Label>
+              <Label>{t("calc.unitNumber")} *</Label>
               <UnitSearchSelect
                 units={availableUnits}
                 value={unitId}
@@ -265,7 +267,7 @@ export default function RentCalculator() {
 
             <div>
               <div className="space-y-2">
-                <Label htmlFor="annualRent">Old Annual Rent (AED) *</Label>
+                <Label htmlFor="annualRent">{t("calc.oldAnnualRent")} *</Label>
                 <Input
                   id="annualRent"
                   type="number"
@@ -274,30 +276,30 @@ export default function RentCalculator() {
                   onChange={(e) => setAnnualRent(parseFloat(e.target.value) || 0)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Enter the current rent — a 5% increase will be applied automatically.
+                  {t("calc.rentHint")}
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Number of Payments</Label>
+              <Label>{t("calc.payments")}</Label>
               <Select value={numPayments} onValueChange={setNumPayments}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1 Payment (Annual)</SelectItem>
-                  <SelectItem value="2">2 Payments (Semi-Annual)</SelectItem>
-                  <SelectItem value="3">3 Payments</SelectItem>
-                  <SelectItem value="4">4 Payments (Quarterly)</SelectItem>
-                  <SelectItem value="6">6 Payments (Bi-Monthly)</SelectItem>
-                  <SelectItem value="12">12 Payments (Monthly)</SelectItem>
+                  <SelectItem value="1">{t("calc.1payment")}</SelectItem>
+                  <SelectItem value="2">{t("calc.2payments")}</SelectItem>
+                  <SelectItem value="3">{t("calc.3payments")}</SelectItem>
+                  <SelectItem value="4">{t("calc.4payments")}</SelectItem>
+                  <SelectItem value="6">{t("calc.6payments")}</SelectItem>
+                  <SelectItem value="12">{t("calc.12payments")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="startDate">Lease Start Date *</Label>
+              <Label htmlFor="startDate">{t("calc.leaseStart")} *</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -307,8 +309,8 @@ export default function RentCalculator() {
             </div>
 
             <Button onClick={handleCalculate} className="w-full mt-4" size="lg">
-              <Calculator className="w-4 h-4 mr-2" />
-              Calculate Rent
+              <Calculator className="w-4 h-4 me-2" />
+              {t("calc.calculate")}
             </Button>
           </CardContent>
         </Card>
@@ -321,12 +323,12 @@ export default function RentCalculator() {
               {/* Rent Summary */}
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
-                  label="Annual Rent"
+                  label={t("result.annualRent")}
                   value={formatAED(results.calculation.annualRent)}
                   icon={<DollarSign className="w-4 h-4" />}
                 />
                 <SummaryCard
-                  label="Monthly Rent"
+                  label={t("result.monthlyRent")}
                   value={formatAED(results.calculation.monthlyRent)}
                   icon={<Calendar className="w-4 h-4" />}
                 />
@@ -337,7 +339,7 @@ export default function RentCalculator() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {results.calculation.isCommercial && (
                     <SummaryCard
-                      label="VAT (5%)"
+                      label={t("result.vat")}
                       value={formatAED(results.calculation.vatAmount)}
                       icon={<DollarSign className="w-4 h-4" />}
                       highlight
@@ -345,20 +347,20 @@ export default function RentCalculator() {
                   )}
                   {results.calculation.brokerFee > 0 && (
                     <SummaryCard
-                      label="Broker Fee (5%)"
+                      label={t("result.brokerFee")}
                       value={formatAED(results.calculation.brokerFee)}
                       icon={<DollarSign className="w-4 h-4" />}
                       highlight
                     />
                   )}
                   <SummaryCard
-                    label="Security Deposit (5%)"
+                    label={t("result.securityDeposit")}
                     value={formatAED(results.calculation.securityDeposit)}
                     icon={<DollarSign className="w-4 h-4" />}
                     highlight
                   />
                   <SummaryCard
-                    label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
+                    label={leaseType === "new" ? t("result.adminFeeNew") : t("result.adminFeeRenewal")}
                     value={formatAED(
                       isCommercial
                         ? (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountCommercial ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountCommercial ?? 0)
@@ -376,14 +378,14 @@ export default function RentCalculator() {
                   <CardContent className="py-4 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
-                        First Payment (includes 5% VAT)
+                        {t("result.firstPayment")}
                       </p>
                       <p className="text-2xl font-display font-bold text-foreground">
                         AED {formatAED(results.calculation.firstPayment)}
                       </p>
                     </div>
                     <Badge className="bg-accent text-accent-foreground text-sm px-3 py-1">
-                      VAT Included
+                      {t("result.vatIncluded")}
                     </Badge>
                   </CardContent>
                 </Card>
@@ -395,15 +397,15 @@ export default function RentCalculator() {
               {/* Fee Schedule */}
               <Card className="shadow-card">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Additional Fees Schedule</CardTitle>
+                  <CardTitle className="text-base">{t("result.additionalFees")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b">
-                          <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Fee</th>
-                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground">Amount (AED)</th>
+                          <th className="text-start py-2 px-3 font-semibold text-muted-foreground">{t("result.fee")}</th>
+                          <th className="text-end py-2 px-3 font-semibold text-muted-foreground">{t("result.amountAED")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -413,7 +415,7 @@ export default function RentCalculator() {
                               <div className="font-medium">{fee.name}</div>
                               <div className="text-xs text-muted-foreground">{fee.description}</div>
                             </td>
-                            <td className="py-2.5 px-3 text-right font-semibold tabular-nums">
+                            <td className="py-2.5 px-3 text-end font-semibold tabular-nums">
                               {formatAED(isCommercial ? fee.amountCommercial : fee.amountResidential)}
                             </td>
                           </tr>
@@ -427,8 +429,8 @@ export default function RentCalculator() {
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <Button onClick={handlePrint} size="lg" variant="outline" className="flex-1">
-                  <Printer className="w-4 h-4 mr-2" />
-                  Print / PDF
+                  <Printer className="w-4 h-4 me-2" />
+                  {t("calc.print")}
                 </Button>
                 <Button onClick={() => {
                   if (!results || !selectedBuilding || !selectedUnit) return;
@@ -447,8 +449,8 @@ export default function RentCalculator() {
                     leaseEndDate: format(leaseEnd, "dd MMM yyyy"), leaseType: leaseType === "new" ? "New Lease" : "Renewal", isCommercial,
                   });
                 }} size="lg" variant="outline" className="flex-1">
-                  <FileDown className="w-4 h-4 mr-2" />
-                  Download Word
+                  <FileDown className="w-4 h-4 me-2" />
+                  {t("calc.downloadWord")}
                 </Button>
               </div>
             </div>
@@ -458,10 +460,10 @@ export default function RentCalculator() {
                 <Calculator className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-display font-semibold text-foreground mb-2">
-                Ready to Calculate
+                {t("calc.readyTitle")}
               </h3>
               <p className="text-muted-foreground max-w-sm">
-                Fill in the tenant details on the left and click "Calculate Rent" to see the full breakdown and payment schedule.
+                {t("calc.readyDesc")}
               </p>
             </div>
           )}

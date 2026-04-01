@@ -10,8 +10,10 @@ import { buildings } from "@/data/buildings";
 import { saveMaintenanceRequest } from "@/utils/storage";
 import { toast } from "sonner";
 import { maintenanceRequestSchema } from "@/utils/validation";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function MaintenanceForm() {
+  const { t } = useLanguage();
   const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [building, setBuilding] = useState("");
@@ -39,7 +41,7 @@ export default function MaintenanceForm() {
 
     try {
       await saveMaintenanceRequest(result.data as Required<typeof result.data>);
-      toast.success("Maintenance request submitted successfully!");
+      toast.success(t("maint.success"));
       setSubmitted(true);
     } catch {
       toast.error("Failed to submit request. Please try again.");
@@ -65,19 +67,19 @@ export default function MaintenanceForm() {
               <CheckCircle2 className="w-8 h-8 text-success" />
             </div>
             <h3 className="text-xl font-display font-bold text-foreground">
-              Request Submitted!
+              {t("maint.submitted")}
             </h3>
             <p className="text-muted-foreground max-w-sm mx-auto">
-              Your maintenance request has been submitted. Our team will review it and get back to you shortly.
+              {t("maint.submittedDesc")}
             </p>
             <p className="text-sm text-muted-foreground">
-              For urgent issues, please contact:{" "}
+              {t("maint.urgentContact")}{" "}
               <a href="mailto:info@alyassiaproperties.ae" className="text-primary font-medium hover:underline">
                 info@alyassiaproperties.ae
               </a>
             </p>
             <Button onClick={handleReset} variant="outline" className="mt-4">
-              Submit Another Request
+              {t("maint.another")}
             </Button>
           </CardContent>
         </Card>
@@ -89,10 +91,10 @@ export default function MaintenanceForm() {
     <div className="max-w-lg mx-auto animate-fade-in">
       <div className="text-center space-y-2 mb-6">
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-          Maintenance Request
+          {t("maint.title")}
         </h2>
         <p className="text-muted-foreground">
-          Submit a maintenance complaint and our team will address it promptly.
+          {t("maint.subtitle")}
         </p>
       </div>
 
@@ -100,27 +102,27 @@ export default function MaintenanceForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Wrench className="w-5 h-5 text-primary" />
-            Submit a Request
+            {t("maint.submitTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="maint-name">Tenant Name *</Label>
+                <Label htmlFor="maint-name">{t("maint.name")} *</Label>
                 <Input
                   id="maint-name"
-                  placeholder="Your name"
+                  placeholder={t("maint.yourName")}
                   value={tenantName}
                   onChange={(e) => setTenantName(e.target.value)}
                   maxLength={100}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="maint-company">Company</Label>
+                <Label htmlFor="maint-company">{t("maint.company")}</Label>
                 <Input
                   id="maint-company"
-                  placeholder="Company name"
+                  placeholder={t("maint.companyName")}
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   maxLength={100}
@@ -130,10 +132,10 @@ export default function MaintenanceForm() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Building *</Label>
+                <Label>{t("maint.building")} *</Label>
                 <Select value={building} onValueChange={setBuilding}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select building" />
+                    <SelectValue placeholder={t("maint.selectBuilding")} />
                   </SelectTrigger>
                   <SelectContent>
                     {buildings.map((b) => (
@@ -145,10 +147,10 @@ export default function MaintenanceForm() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="maint-unit">Unit Number *</Label>
+                <Label htmlFor="maint-unit">{t("maint.unit")} *</Label>
                 <Input
                   id="maint-unit"
-                  placeholder="e.g. M101"
+                  placeholder={t("maint.unitPlaceholder")}
                   value={unitNumber}
                   onChange={(e) => setUnitNumber(e.target.value)}
                   maxLength={20}
@@ -157,25 +159,25 @@ export default function MaintenanceForm() {
             </div>
 
             <div className="space-y-2">
-              <Label>Priority</Label>
+              <Label>{t("maint.priority")}</Label>
               <Select value={priority} onValueChange={setPriority}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low — General maintenance</SelectItem>
-                  <SelectItem value="medium">Medium — Needs attention soon</SelectItem>
-                  <SelectItem value="high">High — Affects daily operations</SelectItem>
-                  <SelectItem value="urgent">Urgent — Emergency / Safety issue</SelectItem>
+                  <SelectItem value="low">{t("maint.low")}</SelectItem>
+                  <SelectItem value="medium">{t("maint.medium")}</SelectItem>
+                  <SelectItem value="high">{t("maint.high")}</SelectItem>
+                  <SelectItem value="urgent">{t("maint.urgent")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="maint-desc">Description *</Label>
+              <Label htmlFor="maint-desc">{t("maint.description")} *</Label>
               <Textarea
                 id="maint-desc"
-                placeholder="Describe the issue in detail..."
+                placeholder={t("maint.descPlaceholder")}
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -184,8 +186,8 @@ export default function MaintenanceForm() {
             </div>
 
             <Button type="submit" className="w-full" size="lg">
-              <Send className="w-4 h-4 mr-2" />
-              Submit Request
+              <Send className="w-4 h-4 me-2" />
+              {t("maint.submit")}
             </Button>
           </form>
         </CardContent>
