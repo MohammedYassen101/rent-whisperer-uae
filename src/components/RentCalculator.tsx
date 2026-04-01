@@ -101,7 +101,7 @@ export default function RentCalculator() {
       calculatedAt: new Date().toISOString(),
     }).catch(() => {});
 
-    toast.success("Rent calculated successfully!");
+    toast.success(t("calc.success"));
   };
 
   const handlePrint = () => {
