@@ -403,8 +403,8 @@ export default function RentCalculator() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b">
-                          <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Fee</th>
-                          <th className="text-right py-2 px-3 font-semibold text-muted-foreground">Amount (AED)</th>
+                          <th className="text-start py-2 px-3 font-semibold text-muted-foreground">{t("result.fee")}</th>
+                          <th className="text-end py-2 px-3 font-semibold text-muted-foreground">{t("result.amountAED")}</th>
                         </tr>
                       </thead>
                       <tbody>
