@@ -448,8 +448,8 @@ export default function RentCalculator() {
                     leaseEndDate: format(leaseEnd, "dd MMM yyyy"), leaseType: leaseType === "new" ? "New Lease" : "Renewal", isCommercial,
                   });
                 }} size="lg" variant="outline" className="flex-1">
-                  <FileDown className="w-4 h-4 mr-2" />
-                  Download Word
+                  <FileDown className="w-4 h-4 me-2" />
+                  {t("calc.downloadWord")}
                 </Button>
               </div>
             </div>
