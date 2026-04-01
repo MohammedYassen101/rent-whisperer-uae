@@ -19,6 +19,7 @@ import PaymentSchedule from "./PaymentSchedule";
 import UnitSearchSelect from "./UnitSearchSelect";
 import { toast } from "sonner";
 import { rentCalculatorSchema } from "@/utils/validation";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function RentCalculator() {
   const [tenantName, setTenantName] = useState("");
