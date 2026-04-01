@@ -210,10 +210,10 @@ export default function RentCalculator() {
 
             {isCommercial && (
               <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
+                <Label htmlFor="companyName">{t("calc.companyName")}</Label>
                 <Input
                   id="companyName"
-                  placeholder="Enter company name"
+                  placeholder={t("calc.enterCompany")}
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   maxLength={100}
