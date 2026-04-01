@@ -281,18 +281,18 @@ export default function RentCalculator() {
             </div>
 
             <div className="space-y-2">
-              <Label>Number of Payments</Label>
+              <Label>{t("calc.payments")}</Label>
               <Select value={numPayments} onValueChange={setNumPayments}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1 Payment (Annual)</SelectItem>
-                  <SelectItem value="2">2 Payments (Semi-Annual)</SelectItem>
-                  <SelectItem value="3">3 Payments</SelectItem>
-                  <SelectItem value="4">4 Payments (Quarterly)</SelectItem>
-                  <SelectItem value="6">6 Payments (Bi-Monthly)</SelectItem>
-                  <SelectItem value="12">12 Payments (Monthly)</SelectItem>
+                  <SelectItem value="1">{t("calc.1payment")}</SelectItem>
+                  <SelectItem value="2">{t("calc.2payments")}</SelectItem>
+                  <SelectItem value="3">{t("calc.3payments")}</SelectItem>
+                  <SelectItem value="4">{t("calc.4payments")}</SelectItem>
+                  <SelectItem value="6">{t("calc.6payments")}</SelectItem>
+                  <SelectItem value="12">{t("calc.12payments")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
