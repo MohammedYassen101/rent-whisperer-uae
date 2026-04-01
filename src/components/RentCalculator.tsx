@@ -377,14 +377,14 @@ export default function RentCalculator() {
                   <CardContent className="py-4 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
-                        First Payment (includes 5% VAT)
+                        {t("result.firstPayment")}
                       </p>
                       <p className="text-2xl font-display font-bold text-foreground">
                         AED {formatAED(results.calculation.firstPayment)}
                       </p>
                     </div>
                     <Badge className="bg-accent text-accent-foreground text-sm px-3 py-1">
-                      VAT Included
+                      {t("result.vatIncluded")}
                     </Badge>
                   </CardContent>
                 </Card>
