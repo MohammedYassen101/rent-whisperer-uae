@@ -359,7 +359,7 @@ export default function RentCalculator() {
                     highlight
                   />
                   <SummaryCard
-                    label={leaseType === "new" ? "Admin Fee (New)" : "Admin Fee (Renewal)"}
+                    label={leaseType === "new" ? t("result.adminFeeNew") : t("result.adminFeeRenewal")}
                     value={formatAED(
                       isCommercial
                         ? (leaseType === "new" ? fees.find(f => f.id === "new-lease")?.amountCommercial ?? 0 : fees.find(f => f.id === "lease-renewal")?.amountCommercial ?? 0)
