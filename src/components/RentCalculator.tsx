@@ -396,7 +396,7 @@ export default function RentCalculator() {
               {/* Fee Schedule */}
               <Card className="shadow-card">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Additional Fees Schedule</CardTitle>
+                  <CardTitle className="text-base">{t("result.additionalFees")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
