@@ -240,7 +240,7 @@ export default function RentCalculator() {
             </div>
 
             <div className="space-y-2">
-              <Label>Unit Number *</Label>
+              <Label>{t("calc.unitNumber")} *</Label>
               <UnitSearchSelect
                 units={availableUnits}
                 value={unitId}
