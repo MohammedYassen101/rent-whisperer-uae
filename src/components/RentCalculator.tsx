@@ -428,8 +428,8 @@ export default function RentCalculator() {
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <Button onClick={handlePrint} size="lg" variant="outline" className="flex-1">
-                  <Printer className="w-4 h-4 mr-2" />
-                  Print / PDF
+                  <Printer className="w-4 h-4 me-2" />
+                  {t("calc.print")}
                 </Button>
                 <Button onClick={() => {
                   if (!results || !selectedBuilding || !selectedUnit) return;
