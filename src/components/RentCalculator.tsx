@@ -346,7 +346,7 @@ export default function RentCalculator() {
                   )}
                   {results.calculation.brokerFee > 0 && (
                     <SummaryCard
-                      label="Broker Fee (5%)"
+                      label={t("result.brokerFee")}
                       value={formatAED(results.calculation.brokerFee)}
                       icon={<DollarSign className="w-4 h-4" />}
                       highlight
