@@ -298,7 +298,7 @@ export default function RentCalculator() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="startDate">Lease Start Date *</Label>
+              <Label htmlFor="startDate">{t("calc.leaseStart")} *</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -308,8 +308,8 @@ export default function RentCalculator() {
             </div>
 
             <Button onClick={handleCalculate} className="w-full mt-4" size="lg">
-              <Calculator className="w-4 h-4 mr-2" />
-              Calculate Rent
+              <Calculator className="w-4 h-4 me-2" />
+              {t("calc.calculate")}
             </Button>
           </CardContent>
         </Card>
