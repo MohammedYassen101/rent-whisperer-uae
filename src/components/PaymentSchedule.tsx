@@ -5,12 +5,14 @@ import { PaymentScheduleItem } from "@/types/rent";
 import { formatAED } from "@/utils/calculations";
 import { format } from "date-fns";
 import { numberToWordsEn, numberToWordsAr } from "@/utils/numberToWords";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface PaymentScheduleProps {
   schedule: PaymentScheduleItem[];
 }
 
 export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
+  const { t } = useLanguage();
   const totalAmount = schedule.reduce((sum, item) => sum + item.amount, 0);
 
   return (
@@ -18,9 +20,9 @@ export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <CalendarDays className="w-5 h-5 text-primary" />
-          Payment Schedule
-          <Badge variant="secondary" className="ml-auto">
-            {schedule.length} Payment{schedule.length > 1 ? "s" : ""}
+          {t("result.schedule")}
+          <Badge variant="secondary" className="ms-auto">
+            {schedule.length} {t("result.paymentNo")}{schedule.length > 1 ? "" : ""}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -29,11 +31,11 @@ export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b-2 border-border">
-                <th className="text-left py-2 px-3 font-semibold text-muted-foreground">#</th>
-                <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Due Date</th>
-                <th className="text-right py-2 px-3 font-semibold text-muted-foreground">Base Amount</th>
-                <th className="text-right py-2 px-3 font-semibold text-muted-foreground">VAT (5%)</th>
-                <th className="text-right py-2 px-3 font-semibold text-muted-foreground">Total</th>
+                <th className="text-start py-2 px-3 font-semibold text-muted-foreground">#</th>
+                <th className="text-start py-2 px-3 font-semibold text-muted-foreground">{t("result.dueDate")}</th>
+                <th className="text-end py-2 px-3 font-semibold text-muted-foreground">{t("result.baseAmount")}</th>
+                <th className="text-end py-2 px-3 font-semibold text-muted-foreground">{t("result.vat")}</th>
+                <th className="text-end py-2 px-3 font-semibold text-muted-foreground">{t("result.total")}</th>
               </tr>
             </thead>
             <tbody>
@@ -54,10 +56,10 @@ export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
                   <td className="py-3 px-3">
                     {format(item.date, "dd MMM yyyy")}
                   </td>
-                  <td className="py-3 px-3 text-right tabular-nums">
+                  <td className="py-3 px-3 text-end tabular-nums">
                     AED {formatAED(item.baseAmount)}
                   </td>
-                  <td className="py-3 px-3 text-right tabular-nums">
+                  <td className="py-3 px-3 text-end tabular-nums">
                     {item.includesVat ? (
                       <span className="text-accent-foreground">
                         AED {formatAED(item.vatAmount)}
@@ -66,11 +68,11 @@ export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
                       <span className="text-muted-foreground">—</span>
                     )}
                   </td>
-                  <td className="py-3 px-3 text-right">
+                  <td className="py-3 px-3 text-end">
                     <div className="tabular-nums font-bold">
                       AED {formatAED(item.amount)}
                       {item.includesVat && (
-                        <Badge className="ml-2 bg-accent text-accent-foreground text-[10px] px-1.5 py-0">
+                        <Badge className="ms-2 bg-accent text-accent-foreground text-[10px] px-1.5 py-0">
                           VAT
                         </Badge>
                       )}
@@ -87,9 +89,9 @@ export default function PaymentSchedule({ schedule }: PaymentScheduleProps) {
               {/* Total row */}
               <tr className="bg-secondary font-bold border-t-2 border-border">
                 <td colSpan={4} className="py-3 px-3">
-                  Total
+                  {t("result.total")}
                 </td>
-                <td className="py-3 px-3 text-right tabular-nums text-primary">
+                <td className="py-3 px-3 text-end tabular-nums text-primary">
                   AED {formatAED(totalAmount)}
                 </td>
               </tr>
