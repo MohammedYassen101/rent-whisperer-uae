@@ -338,7 +338,7 @@ export default function RentCalculator() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {results.calculation.isCommercial && (
                     <SummaryCard
-                      label="VAT (5%)"
+                      label={t("result.vat")}
                       value={formatAED(results.calculation.vatAmount)}
                       icon={<DollarSign className="w-4 h-4" />}
                       highlight
