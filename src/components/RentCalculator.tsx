@@ -322,12 +322,12 @@ export default function RentCalculator() {
               {/* Rent Summary */}
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
-                  label="Annual Rent"
+                  label={t("result.annualRent")}
                   value={formatAED(results.calculation.annualRent)}
                   icon={<DollarSign className="w-4 h-4" />}
                 />
                 <SummaryCard
-                  label="Monthly Rent"
+                  label={t("result.monthlyRent")}
                   value={formatAED(results.calculation.monthlyRent)}
                   icon={<Calendar className="w-4 h-4" />}
                 />
