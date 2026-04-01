@@ -65,11 +65,11 @@ export default function Header() {
               {/* Language Toggle - Desktop */}
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold transition-all duration-200 bg-accent/15 text-accent-foreground hover:bg-accent/25 border border-accent/30 ms-2"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-extrabold transition-all duration-200 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:from-primary/90 hover:to-primary/70 shadow-md hover:shadow-lg ms-3 ring-2 ring-primary/20"
                 aria-label="Toggle language"
               >
-                <Globe className="w-4 h-4" />
-                <span>{language === "en" ? "عربي" : "EN"}</span>
+                <Globe className="w-5 h-5" />
+                <span className="text-base">{language === "en" ? "عربي" : "English"}</span>
               </button>
             </nav>
 
@@ -77,10 +77,11 @@ export default function Header() {
             <div className="md:hidden flex items-center gap-1">
               <button
                 onClick={toggleLanguage}
-                className="p-2 rounded-md bg-accent/15 text-accent-foreground hover:bg-accent/25 border border-accent/30 transition-colors text-xs font-bold"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:from-primary/90 hover:to-primary/70 shadow-md transition-all text-sm font-extrabold"
                 aria-label="Toggle language"
               >
-                {language === "en" ? "عربي" : "EN"}
+                <Globe className="w-4 h-4" />
+                <span>{language === "en" ? "عربي" : "EN"}</span>
               </button>
               <button
                 className="p-2 rounded-md hover:bg-secondary transition-colors"
