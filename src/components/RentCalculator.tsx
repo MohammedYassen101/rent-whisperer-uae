@@ -23,6 +23,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 
 export default function RentCalculator() {
   const { t } = useLanguage();
+  const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [contractType, setContractType] = useState<string>("");
   const [leaseType, setLeaseType] = useState<string>("");
