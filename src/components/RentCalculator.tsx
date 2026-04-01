@@ -459,10 +459,10 @@ export default function RentCalculator() {
                 <Calculator className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-display font-semibold text-foreground mb-2">
-                Ready to Calculate
+                {t("calc.readyTitle")}
               </h3>
               <p className="text-muted-foreground max-w-sm">
-                Fill in the tenant details on the left and click "Calculate Rent" to see the full breakdown and payment schedule.
+                {t("calc.readyDesc")}
               </p>
             </div>
           )}
