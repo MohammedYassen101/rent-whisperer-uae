@@ -179,30 +179,30 @@ export default function RentCalculator() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Contract Type *</Label>
+                <Label>{t("calc.contractType")} *</Label>
                 <Select value={contractType} onValueChange={(val) => {
                   setContractType(val);
                   if (val !== "commercial") setCompanyName("");
                 }}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder={t("calc.selectType")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="commercial">Commercial</SelectItem>
-                    <SelectItem value="residential">Residential</SelectItem>
+                    <SelectItem value="commercial">{t("calc.commercial")}</SelectItem>
+                    <SelectItem value="residential">{t("calc.residential")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Lease Type *</Label>
+                <Label>{t("calc.leaseType")} *</Label>
                 <Select value={leaseType} onValueChange={setLeaseType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select lease" />
+                    <SelectValue placeholder={t("calc.selectLease")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">New Lease</SelectItem>
-                    <SelectItem value="renewal">Renewal</SelectItem>
+                    <SelectItem value="new">{t("calc.newLease")}</SelectItem>
+                    <SelectItem value="renewal">{t("calc.renewal")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
