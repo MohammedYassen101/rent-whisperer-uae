@@ -162,7 +162,7 @@ export default function RentCalculator() {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Building2 className="w-5 h-5 text-primary" />
-              Tenant Details
+              {t("calc.tenantDetails")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
