@@ -224,10 +224,10 @@ export default function RentCalculator() {
             <Separator />
 
             <div className="space-y-2">
-              <Label>Building *</Label>
+              <Label>{t("calc.building")} *</Label>
               <Select value={buildingId} onValueChange={setBuildingId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select building" />
+                  <SelectValue placeholder={t("calc.selectBuilding")} />
                 </SelectTrigger>
                 <SelectContent>
                   {buildings.map((b) => (
