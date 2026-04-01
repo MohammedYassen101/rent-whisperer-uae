@@ -149,10 +149,10 @@ export default function RentCalculator() {
       {/* Hero */}
       <div className="text-center space-y-2 animate-fade-in">
         <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-          Rent Calculator
+          {t("calc.title")}
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Calculate your commercial or residential rent, view payment schedules, and download a detailed statement.
+          {t("calc.subtitle")}
         </p>
       </div>
 
