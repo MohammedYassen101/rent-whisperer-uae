@@ -79,6 +79,8 @@ const labels = {
   renewal: { en: "Renewal", ar: "تجديد" },
   newLeaseAdminFee: { en: "New Lease Administration Fee", ar: "رسوم إدارية (عقد جديد)" },
   renewalAdminFee: { en: "Renewal Administration Fee", ar: "رسوم إدارية (تجديد)" },
+  firstCheque: { en: "First Cheque Value", ar: "قيمة الشيك الأول" },
+  firstChequeDesc: { en: "First Payment + Security Deposit + Administration Fee", ar: "الدفعة الأولى + التأمين + الرسوم الإدارية" },
 };
 
 type LabelKey = keyof typeof labels;
