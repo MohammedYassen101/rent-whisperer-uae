@@ -488,7 +488,7 @@ export default function RentCalculator() {
                     adminFee, adminFeeLabel, numPayments: results.calculation.numPayments,
                     schedule: results.schedule, fees, leaseStartDate: format(leaseStart, "dd MMM yyyy"),
                     leaseEndDate: format(leaseEnd, "dd MMM yyyy"), leaseType: leaseType === "new" ? "New Lease" : "Renewal", isCommercial,
-                  });
+                    language,
                 }} size="lg" variant="outline" className="flex-1">
                   <FileDown className="w-4 h-4 me-2" />
                   {t("calc.downloadWord")}
