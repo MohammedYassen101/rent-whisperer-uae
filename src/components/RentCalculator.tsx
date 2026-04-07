@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, Printer, Building2, DollarSign, Calendar, FileText, FileDown } from "lucide-react";
-import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
+import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById, units } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
 import { saveTenantRecord, getRentIncrease } from "@/utils/storage";
