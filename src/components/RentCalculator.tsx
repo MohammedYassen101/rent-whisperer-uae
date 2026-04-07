@@ -159,6 +159,7 @@ export default function RentCalculator() {
       leaseEndDate: format(leaseEnd, "dd MMM yyyy"),
       leaseType: leaseType === "new" ? "New Lease" : "Renewal",
       isCommercial,
+      language,
     });
   };
 
