@@ -46,7 +46,13 @@ export default function RentCalculator() {
   }, []);
 
   const filteredBuildings = useMemo(
-    () => locationFilter === "all" ? buildings : buildings.filter((b) => b.location === locationFilter),
+    () => {
+      const filtered = locationFilter === "all" ? buildings : buildings.filter((b) => b.location === locationFilter);
+      return filtered.map((b) => ({
+        ...b,
+        unitCount: units.filter((u) => u.buildingId === b.id).length,
+      }));
+    },
     [locationFilter]
   );
 
