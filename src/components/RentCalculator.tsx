@@ -272,7 +272,7 @@ export default function RentCalculator() {
                   <SelectContent>
                     {filteredBuildings.map((b) => (
                       <SelectItem key={b.id} value={b.id}>
-                        {b.name}
+                        {b.name} ({b.unitCount})
                       </SelectItem>
                     ))}
                   </SelectContent>
