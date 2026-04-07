@@ -40,6 +40,16 @@ export default function RentCalculator() {
 
   const isCommercial = contractType === "commercial";
 
+  const locations = useMemo(() => {
+    const locs = [...new Set(buildings.map((b) => b.location))];
+    return locs.sort();
+  }, []);
+
+  const filteredBuildings = useMemo(
+    () => locationFilter === "all" ? buildings : buildings.filter((b) => b.location === locationFilter),
+    [locationFilter]
+  );
+
   const availableUnits = useMemo(
     () => (buildingId ? getUnitsByBuilding(buildingId) : []),
     [buildingId]
