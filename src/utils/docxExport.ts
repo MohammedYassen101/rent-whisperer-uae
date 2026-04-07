@@ -232,6 +232,42 @@ export async function exportDocx(data: DocxData): Promise<void> {
 
   children.push(new Table({ width: { size: 9360, type: WidthType.DXA }, columnWidths: [800, 2000, 2200, 1800, 2560], rows: scheduleTableRows }));
 
+  // First Cheque Value
+  const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;
+  const firstChequeValue = firstPaymentAmount + data.securityDeposit + data.adminFee;
+  children.push(
+    new Paragraph({
+      spacing: { before: 200 },
+      shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+      border: { top: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, right: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 } },
+      children: [new TextRun({ text: "First Cheque Value / قيمة الشيك الأول", font: "Arial", size: 18, color: "2E7D32" })],
+    }),
+    new Paragraph({
+      shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+      border: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, right: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 } },
+      children: [new TextRun({ text: "First Payment + Security Deposit + Administration Fee / الدفعة الأولى + التأمين + الرسوم الإدارية", font: "Arial", size: 14, color: "555555" })],
+    }),
+    new Paragraph({
+      shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+      border: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, left: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, right: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 } },
+      children: [new TextRun({ text: fmtAED(firstChequeValue), font: "Arial", size: 32, bold: true, color: "1B5E20" })],
+    }),
+    new Paragraph({
+      shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+      border: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, left: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, right: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 } },
+      children: [
+        new TextRun({ text: numberToWordsEn(firstChequeValue), font: "Arial", size: 14, color: "666666" }),
+      ],
+    }),
+    new Paragraph({
+      shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+      border: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, left: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 }, right: { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 } },
+      children: [
+        new TextRun({ text: numberToWordsAr(firstChequeValue), font: "Arial", size: 14, color: "666666" }),
+      ],
+    }),
+  );
+
   // Additional Fees Schedule
   children.push(sectionTitle("Additional Fees Schedule"));
 
