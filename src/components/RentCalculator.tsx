@@ -27,6 +27,7 @@ export default function RentCalculator() {
   const [companyName, setCompanyName] = useState("");
   const [contractType, setContractType] = useState<string>("");
   const [leaseType, setLeaseType] = useState<string>("");
+  const [locationFilter, setLocationFilter] = useState<string>("all");
   const [buildingId, setBuildingId] = useState("");
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
