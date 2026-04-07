@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, Printer, Building2, DollarSign, Calendar, FileText, FileDown } from "lucide-react";
-import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById } from "@/data/buildings";
+import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById, units } from "@/data/buildings";
 import { fees } from "@/data/fees";
 import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
 import { saveTenantRecord, getRentIncrease } from "@/utils/storage";
@@ -46,7 +46,13 @@ export default function RentCalculator() {
   }, []);
 
   const filteredBuildings = useMemo(
-    () => locationFilter === "all" ? buildings : buildings.filter((b) => b.location === locationFilter),
+    () => {
+      const filtered = locationFilter === "all" ? buildings : buildings.filter((b) => b.location === locationFilter);
+      return filtered.map((b) => ({
+        ...b,
+        unitCount: units.filter((u) => u.buildingId === b.id).length,
+      }));
+    },
     [locationFilter]
   );
 
@@ -266,7 +272,7 @@ export default function RentCalculator() {
                   <SelectContent>
                     {filteredBuildings.map((b) => (
                       <SelectItem key={b.id} value={b.id}>
-                        {b.name}
+                        {b.name} ({b.unitCount})
                       </SelectItem>
                     ))}
                   </SelectContent>
