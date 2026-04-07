@@ -143,6 +143,8 @@ export function printReceipt(data: PrintData): void {
     .join("");
 
   const totalRent = data.schedule.reduce((sum, item) => sum + item.amount, 0);
+  const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;
+  const firstChequeValue = firstPaymentAmount + data.securityDeposit + data.adminFee;
 
   const feeRows = data.fees
     .map(
