@@ -191,7 +191,7 @@ export const units: Unit[] = [
   { id: "p14-villa-1", buildingId: "plot-14", unitNumber: "Villa 1", type: "Villa", annualRent: 24000 },
   { id: "p14-villa-2", buildingId: "plot-14", unitNumber: "Villa 2", type: "Villa", annualRent: 36750 },
   { id: "p14-villa-3", buildingId: "plot-14", unitNumber: "Villa 3", type: "Villa", annualRent: 36750 },
-  { id: "p14-villa-4", buildingId: "plot-14", unitNumber: "Villa 4", type: "Villa", annualRent: 50000 },,
+  { id: "p14-villa-4", buildingId: "plot-14", unitNumber: "Villa 4", type: "Villa", annualRent: 50000 },
 
   // ── New Properties from Excel ──
   { id: "maha-b-1002", buildingId: "maha-b", unitNumber: "1002", type: "2 BR", annualRent: 0 },
