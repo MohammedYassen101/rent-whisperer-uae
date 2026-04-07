@@ -324,15 +324,31 @@ export async function exportDocx(data: DocxData): Promise<void> {
       border: { top: greenBorderNone, bottom: greenBorderNone, left: greenBorderSide, right: greenBorderSide },
       children: [new TextRun({ text: fmtAED(firstChequeValue, lang), font: "Arial", size: 32, bold: true, color: "1B5E20" })],
     }),
-    ...amountWordsParagraphs(firstChequeValue, lang, bilingual).map(p => {
-      // Wrap words in green box styling
-      return new Paragraph({
+  );
+  if (isAr) {
+    children.push(
+      new Paragraph({
         shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
         border: { top: greenBorderNone, bottom: greenBorderSide, left: greenBorderSide, right: greenBorderSide },
-        children: p.root && (p as any).options?.children ? (p as any).options.children : [new TextRun({ text: "", font: "Arial", size: 14 })],
-      });
-    }),
-  );
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: numberToWordsAr(firstChequeValue), font: "Arial", size: 14, color: "666666" })],
+      }),
+    );
+  } else {
+    children.push(
+      new Paragraph({
+        shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+        border: { top: greenBorderNone, bottom: greenBorderNone, left: greenBorderSide, right: greenBorderSide },
+        children: [new TextRun({ text: numberToWordsEn(firstChequeValue), font: "Arial", size: 14, color: "666666" })],
+      }),
+      new Paragraph({
+        shading: { type: ShadingType.CLEAR, fill: "E8F5E9" },
+        border: { top: greenBorderNone, bottom: greenBorderSide, left: greenBorderSide, right: greenBorderSide },
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: numberToWordsAr(firstChequeValue), font: "Arial", size: 14, color: "666666" })],
+      }),
+    );
+  }
 
   // Additional Fees Schedule
   children.push(sectionTitle(dl("additionalFees", lang, bilingual)));
