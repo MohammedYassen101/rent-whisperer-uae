@@ -27,6 +27,7 @@ export default function RentCalculator() {
   const [companyName, setCompanyName] = useState("");
   const [contractType, setContractType] = useState<string>("");
   const [leaseType, setLeaseType] = useState<string>("");
+  const [locationFilter, setLocationFilter] = useState<string>("all");
   const [buildingId, setBuildingId] = useState("");
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
@@ -38,6 +39,16 @@ export default function RentCalculator() {
   } | null>(null);
 
   const isCommercial = contractType === "commercial";
+
+  const locations = useMemo(() => {
+    const locs = [...new Set(buildings.map((b) => b.location))];
+    return locs.sort();
+  }, []);
+
+  const filteredBuildings = useMemo(
+    () => locationFilter === "all" ? buildings : buildings.filter((b) => b.location === locationFilter),
+    [locationFilter]
+  );
 
   const availableUnits = useMemo(
     () => (buildingId ? getUnitsByBuilding(buildingId) : []),
@@ -224,20 +235,43 @@ export default function RentCalculator() {
 
             <Separator />
 
-            <div className="space-y-2">
-              <Label>{t("calc.building")} *</Label>
-              <Select value={buildingId} onValueChange={setBuildingId}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("calc.selectBuilding")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {buildings.map((b) => (
-                    <SelectItem key={b.id} value={b.id}>
-                      {b.name} — {b.location}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("calc.location")}</Label>
+                <Select value={locationFilter} onValueChange={(val) => {
+                  setLocationFilter(val);
+                  setBuildingId("");
+                  setUnitId("");
+                  setAnnualRent(0);
+                  setResults(null);
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("calc.allLocations")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("calc.allLocations")}</SelectItem>
+                    {locations.map((loc) => (
+                      <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>{t("calc.building")} *</Label>
+                <Select value={buildingId} onValueChange={setBuildingId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("calc.selectBuilding")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredBuildings.map((b) => (
+                      <SelectItem key={b.id} value={b.id}>
+                        {b.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="space-y-2">

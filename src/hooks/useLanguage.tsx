@@ -23,6 +23,8 @@ const translations: Record<string, Record<Language, string>> = {
   "calc.enterName": { en: "Enter full name", ar: "أدخل الاسم الكامل" },
   "calc.companyName": { en: "Company Name", ar: "اسم الشركة" },
   "calc.enterCompany": { en: "Enter company name", ar: "أدخل اسم الشركة" },
+  "calc.location": { en: "Location", ar: "الموقع" },
+  "calc.allLocations": { en: "All Locations", ar: "جميع المواقع" },
   "calc.building": { en: "Building", ar: "المبنى" },
   "calc.unit": { en: "Unit", ar: "الوحدة" },
   "calc.unitNumber": { en: "Unit Number", ar: "رقم الوحدة" },
