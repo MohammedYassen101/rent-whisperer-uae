@@ -1,6 +1,7 @@
 import { PaymentScheduleItem, Fee } from "@/types/rent";
 import { format } from "date-fns";
 import { numberToWordsEn, numberToWordsAr } from "@/utils/numberToWords";
+import { Language } from "@/hooks/useLanguage";
 
 interface PrintData {
   tenantName: string;
@@ -23,6 +24,7 @@ interface PrintData {
   leaseEndDate: string;
   leaseType: string;
   isCommercial: boolean;
+  language: Language;
 }
 
 function escapeHtml(text: string): string {
@@ -40,19 +42,98 @@ function formatAED(amount: number): string {
   return `AED ${amount.toLocaleString("en-AE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+function formatAEDAr(amount: number): string {
+  return `${amount.toLocaleString("ar-AE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} درهم`;
+}
+
+// Labels map
+const labels = {
+  companyName: { en: "ALYASSIA PROPERTIES L.L.C.", ar: "شركة الياسية للعقارات ش.ش ذ.م.م" },
+  docTitle: { en: "Rent Statement", ar: "كشف إيجار" },
+  generatedOn: { en: "Generated on", ar: "تم الإنشاء في" },
+  tenantInfo: { en: "Tenant Information", ar: "بيانات المستأجر" },
+  tenantName: { en: "Tenant Name:", ar: "اسم المستأجر:" },
+  company: { en: "Company:", ar: "الشركة:" },
+  building: { en: "Building:", ar: "المبنى:" },
+  unit: { en: "Unit:", ar: "الوحدة:" },
+  unitType: { en: "Unit Type:", ar: "نوع الوحدة:" },
+  leaseType: { en: "Lease Type:", ar: "نوع الإيجار:" },
+  leasePeriod: { en: "Lease Period:", ar: "فترة العقد:" },
+  rentSummary: { en: "Rent Summary", ar: "ملخص الإيجار" },
+  annualRent: { en: "Annual Rent", ar: "الإيجار السنوي" },
+  monthlyRent: { en: "Monthly Rent", ar: "الإيجار الشهري" },
+  vatLabel: { en: "5% VAT on Commercial Rent (applied to first payment)", ar: "ضريبة القيمة المضافة 5% على الإيجار التجاري (تُطبق على الدفعة الأولى)" },
+  brokerFeeLabel: { en: "Broker Fee (5% of Annual Rent)", ar: "عمولة الوسيط (5% من الإيجار السنوي)" },
+  securityDeposit: { en: "Security Deposit (5% of Annual Rent)", ar: "التأمين (5% من الإيجار السنوي)" },
+  paymentSchedule: { en: "Payment Schedule", ar: "جدول الدفعات" },
+  payment: { en: "Payment", ar: "الدفعة" },
+  paymentHash: { en: "#", ar: "#" },
+  dueDate: { en: "Due Date", ar: "تاريخ الاستحقاق" },
+  baseAmount: { en: "Base Amount", ar: "المبلغ الأساسي" },
+  vat5: { en: "VAT (5%)", ar: "ضريبة (5%)" },
+  total: { en: "Total", ar: "الإجمالي" },
+  additionalFees: { en: "Additional Fees Schedule", ar: "جدول الرسوم الإضافية" },
+  feeDesc: { en: "Fee Description", ar: "وصف الرسم" },
+  amountAED: { en: "Amount (AED)", ar: "المبلغ (درهم)" },
+  newLease: { en: "New Lease", ar: "عقد جديد" },
+  renewal: { en: "Renewal", ar: "تجديد" },
+  newLeaseAdminFee: { en: "New Lease Administration Fee", ar: "رسوم إدارية (عقد جديد)" },
+  renewalAdminFee: { en: "Renewal Administration Fee", ar: "رسوم إدارية (تجديد)" },
+};
+
+type LabelKey = keyof typeof labels;
+
+function l(key: LabelKey, lang: Language, showBilingual: boolean): string {
+  if (lang === "ar") return labels[key].ar;
+  if (showBilingual) return `${labels[key].en} / ${labels[key].ar}`;
+  return labels[key].en;
+}
+
+function amountDisplay(amount: number, lang: Language, showBilingual: boolean): string {
+  if (lang === "ar") return formatAEDAr(amount);
+  return formatAED(amount);
+}
+
+function amountWordsHtml(amount: number, lang: Language, showBilingual: boolean): string {
+  if (lang === "ar") {
+    return `<div class="amount-words" style="direction:rtl;text-align:right;">${numberToWordsAr(amount)}</div>`;
+  }
+  // English page: show both
+  return `
+    <div class="amount-words">${numberToWordsEn(amount)}</div>
+    <div class="amount-words" style="direction:rtl;text-align:right;">${numberToWordsAr(amount)}</div>
+  `;
+}
+
 export function printReceipt(data: PrintData): void {
+  const lang = data.language;
+  const isAr = lang === "ar";
+  const showBilingual = !isAr; // English page = bilingual
+  const dir = isAr ? "rtl" : "ltr";
+  const amountAlign = isAr ? "left" : "right";
+  const fontFamily = isAr
+    ? "'Segoe UI', 'Arial', Tahoma, sans-serif"
+    : "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+  const adminFeeLabel = data.leaseType === "New Lease"
+    ? l("newLeaseAdminFee", lang, showBilingual)
+    : l("renewalAdminFee", lang, showBilingual);
+
+  const leaseTypeDisplay = data.leaseType === "New Lease"
+    ? l("newLease", lang, showBilingual)
+    : l("renewal", lang, showBilingual);
+
   const scheduleRows = data.schedule
     .map(
       (item) => `
     <tr class="${item.includesVat ? "vat-row" : ""}">
       <td>${item.paymentNumber}</td>
       <td>${format(item.date, "dd MMM yyyy")}</td>
-      <td class="amount">${formatAED(item.baseAmount)}</td>
-      <td class="amount">${item.includesVat ? formatAED(item.vatAmount) : "—"}</td>
+      <td class="amount">${amountDisplay(item.baseAmount, lang, showBilingual)}</td>
+      <td class="amount">${item.includesVat ? amountDisplay(item.vatAmount, lang, showBilingual) : "—"}</td>
       <td class="amount">
-        <strong>${formatAED(item.amount)}</strong>
-        <div class="amount-words">${numberToWordsEn(item.amount)}</div>
-        <div class="amount-words" style="direction:rtl;text-align:right;">${numberToWordsAr(item.amount)}</div>
+        <strong>${amountDisplay(item.amount, lang, showBilingual)}</strong>
+        ${amountWordsHtml(item.amount, lang, showBilingual)}
       </td>
     </tr>
   `
@@ -65,9 +146,8 @@ export function printReceipt(data: PrintData): void {
     .map(
       (fee) => `
     <tr>
-      <td>${fee.name}</td>
-      <td>${fee.nameAr}</td>
-      <td class="amount">${formatAED(data.isCommercial ? fee.amountCommercial : fee.amountResidential)}</td>
+      <td>${isAr ? fee.nameAr : (showBilingual ? `${fee.name} / ${fee.nameAr}` : fee.name)}</td>
+      <td class="amount">${amountDisplay(data.isCommercial ? fee.amountCommercial : fee.amountResidential, lang, showBilingual)}</td>
     </tr>
   `
     )
@@ -75,14 +155,14 @@ export function printReceipt(data: PrintData): void {
 
   const html = `
     <!DOCTYPE html>
-    <html dir="ltr" lang="en">
+    <html dir="${dir}" lang="${isAr ? "ar" : "en"}">
     <head>
       <meta charset="UTF-8" />
       <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src * data:; script-src 'none';">
-      <title>Alyassia Properties - Rent Statement</title>
+      <title>${l("companyName", lang, false)} - ${l("docTitle", lang, false)}</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1a1a1a; font-size: 13px; line-height: 1.5; }
+        body { font-family: ${fontFamily}; padding: 40px; color: #1a1a1a; font-size: 13px; line-height: 1.5; direction: ${dir}; }
         .header { text-align: center; border-bottom: 3px solid #7a1a1a; padding-bottom: 20px; margin-bottom: 30px; }
         .company-name { font-size: 26px; font-weight: 700; color: #7a1a1a; letter-spacing: 2px; }
         .company-name-ar { font-size: 18px; color: #7a1a1a; margin-top: 4px; direction: rtl; }
@@ -95,12 +175,12 @@ export function printReceipt(data: PrintData): void {
         .info-label { color: #666; min-width: 140px; }
         .info-value { font-weight: 600; color: #1a1a1a; }
         table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
-        th { background: #7a1a1a; color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        th { background: #7a1a1a; color: #fff; padding: 10px 12px; text-align: ${isAr ? "right" : "left"}; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         td { padding: 8px 12px; border-bottom: 1px solid #eee; }
         tr:nth-child(even) { background: #fafafa; }
         .vat-row { background: #fff8e1 !important; }
         .vat-row td { font-weight: 600; }
-        .amount { text-align: right; font-variant-numeric: tabular-nums; }
+        .amount { text-align: ${amountAlign}; font-variant-numeric: tabular-nums; }
         .amount-words { font-size: 9px; color: #666; font-weight: 400; margin-top: 2px; line-height: 1.3; }
         .total-row td { border-top: 2px solid #e8d5a3; padding-top: 10px; }
         .highlight-box { background: #fff8e1; border: 1px solid #e8d5a3; border-radius: 6px; padding: 12px 16px; margin-top: 12px; }
@@ -118,83 +198,79 @@ export function printReceipt(data: PrintData): void {
     <body>
       <div class="header">
         <img src="${window.location.origin}/logo.png" alt="Alyassia Properties" style="max-width: 200px; margin: 0 auto 12px; display: block;" />
-        <div class="company-name">ALYASSIA PROPERTIES L.L.C.</div>
-        <div class="company-name-ar">شركة الياسية للعقارات ش.ش ذ.م.م</div>
-        <div class="doc-title">Rent Statement</div>
-        <div class="doc-date">Generated on ${format(new Date(), "dd MMMM yyyy, hh:mm a")}</div>
+        ${isAr
+          ? `<div class="company-name" style="direction:rtl;">${labels.companyName.ar}</div>`
+          : `<div class="company-name">${labels.companyName.en}</div>
+             <div class="company-name-ar">${labels.companyName.ar}</div>`
+        }
+        <div class="doc-title">${l("docTitle", lang, showBilingual)}</div>
+        <div class="doc-date">${l("generatedOn", lang, showBilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}</div>
       </div>
 
       <div class="section">
-        <div class="section-title">Tenant Information</div>
+        <div class="section-title">${l("tenantInfo", lang, showBilingual)}</div>
         <div class="info-grid">
-          <div class="info-item"><span class="info-label">Tenant Name:</span><span class="info-value">${escapeHtml(data.tenantName)}</span></div>
-          <div class="info-item"><span class="info-label">Company:</span><span class="info-value">${escapeHtml(data.companyName || "—")}</span></div>
-          <div class="info-item"><span class="info-label">Building:</span><span class="info-value">${escapeHtml(data.buildingName)}</span></div>
-          <div class="info-item"><span class="info-label">Unit:</span><span class="info-value">${escapeHtml(data.unitNumber)}</span></div>
-          <div class="info-item"><span class="info-label">Unit Type:</span><span class="info-value">${escapeHtml(data.unitType)}${data.area ? ` (${data.area} sqm)` : ""}</span></div>
-          <div class="info-item"><span class="info-label">Lease Type:</span><span class="info-value">${escapeHtml(data.leaseType)}</span></div>
-          <div class="info-item"><span class="info-label">Lease Period:</span><span class="info-value">${escapeHtml(data.leaseStartDate)} — ${escapeHtml(data.leaseEndDate)}</span></div>
+          <div class="info-item"><span class="info-label">${l("tenantName", lang, showBilingual)}</span><span class="info-value">${escapeHtml(data.tenantName)}</span></div>
+          <div class="info-item"><span class="info-label">${l("company", lang, showBilingual)}</span><span class="info-value">${escapeHtml(data.companyName || "—")}</span></div>
+          <div class="info-item"><span class="info-label">${l("building", lang, showBilingual)}</span><span class="info-value">${escapeHtml(data.buildingName)}</span></div>
+          <div class="info-item"><span class="info-label">${l("unit", lang, showBilingual)}</span><span class="info-value">${escapeHtml(data.unitNumber)}</span></div>
+          <div class="info-item"><span class="info-label">${l("unitType", lang, showBilingual)}</span><span class="info-value">${escapeHtml(data.unitType)}${data.area ? ` (${data.area} sqm)` : ""}</span></div>
+          <div class="info-item"><span class="info-label">${l("leaseType", lang, showBilingual)}</span><span class="info-value">${leaseTypeDisplay}</span></div>
+          <div class="info-item"><span class="info-label">${l("leasePeriod", lang, showBilingual)}</span><span class="info-value">${escapeHtml(data.leaseStartDate)} — ${escapeHtml(data.leaseEndDate)}</span></div>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Rent Summary</div>
+        <div class="section-title">${l("rentSummary", lang, showBilingual)}</div>
         <div class="summary-grid">
           <div class="summary-card">
-            <div class="label">Annual Rent</div>
-            <div class="value">${formatAED(data.annualRent)}</div>
+            <div class="label">${l("annualRent", lang, showBilingual)}</div>
+            <div class="value">${amountDisplay(data.annualRent, lang, showBilingual)}</div>
           </div>
           <div class="summary-card">
-            <div class="label">Monthly Rent</div>
-            <div class="value">${formatAED(data.monthlyRent)}</div>
+            <div class="label">${l("monthlyRent", lang, showBilingual)}</div>
+            <div class="value">${amountDisplay(data.monthlyRent, lang, showBilingual)}</div>
           </div>
           <div class="summary-card">
-            <div class="label">${escapeHtml(data.adminFeeLabel)}</div>
-            <div class="value">${formatAED(data.adminFee)}</div>
+            <div class="label">${adminFeeLabel}</div>
+            <div class="value">${amountDisplay(data.adminFee, lang, showBilingual)}</div>
           </div>
         </div>
-        ${
-          data.vatAmount > 0
-            ? `<div class="highlight-box">
-            <div class="label">5% VAT on Commercial Rent (applied to first payment)</div>
-            <div class="value">${formatAED(data.vatAmount)}</div>
-          </div>`
-            : ""
-        }
-        ${
-          data.brokerFee > 0
-            ? `<div class="highlight-box" style="margin-top:8px;">
-            <div class="label">Broker Fee (5% of Annual Rent)</div>
-            <div class="value">${formatAED(data.brokerFee)}</div>
-          </div>`
-            : ""
-        }
+        ${data.vatAmount > 0
+          ? `<div class="highlight-box">
+            <div class="label">${l("vatLabel", lang, showBilingual)}</div>
+            <div class="value">${amountDisplay(data.vatAmount, lang, showBilingual)}</div>
+          </div>` : ""}
+        ${data.brokerFee > 0
+          ? `<div class="highlight-box" style="margin-top:8px;">
+            <div class="label">${l("brokerFeeLabel", lang, showBilingual)}</div>
+            <div class="value">${amountDisplay(data.brokerFee, lang, showBilingual)}</div>
+          </div>` : ""}
         <div class="highlight-box" style="margin-top:8px;">
-          <div class="label">Security Deposit (5% of Annual Rent) / التأمين</div>
-          <div class="value">${formatAED(data.securityDeposit)}</div>
+          <div class="label">${l("securityDeposit", lang, showBilingual)}</div>
+          <div class="value">${amountDisplay(data.securityDeposit, lang, showBilingual)}</div>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Payment Schedule (${data.numPayments} Payment${data.numPayments > 1 ? "s" : ""})</div>
+        <div class="section-title">${l("paymentSchedule", lang, showBilingual)} (${data.numPayments} ${isAr ? (data.numPayments > 1 ? "دفعات" : "دفعة") : (data.numPayments > 1 ? "Payments" : "Payment")})</div>
         <table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Due Date</th>
-              <th class="amount">Base Amount</th>
-              <th class="amount">VAT (5%)</th>
-              <th class="amount">Total</th>
+              <th>${l("paymentHash", lang, showBilingual)}</th>
+              <th>${l("dueDate", lang, showBilingual)}</th>
+              <th class="amount">${l("baseAmount", lang, showBilingual)}</th>
+              <th class="amount">${l("vat5", lang, showBilingual)}</th>
+              <th class="amount">${l("total", lang, showBilingual)}</th>
             </tr>
           </thead>
           <tbody>
             ${scheduleRows}
             <tr class="total-row">
-              <td colspan="4">Total</td>
+              <td colspan="4">${l("total", lang, showBilingual)}</td>
               <td class="amount">
-                <strong>${formatAED(totalRent)}</strong>
-                <div class="amount-words">${numberToWordsEn(totalRent)}</div>
-                <div class="amount-words" style="direction:rtl;text-align:right;">${numberToWordsAr(totalRent)}</div>
+                <strong>${amountDisplay(totalRent, lang, showBilingual)}</strong>
+                ${amountWordsHtml(totalRent, lang, showBilingual)}
               </td>
             </tr>
           </tbody>
@@ -202,13 +278,12 @@ export function printReceipt(data: PrintData): void {
       </div>
 
       <div class="section">
-        <div class="section-title">Additional Fees Schedule</div>
+        <div class="section-title">${l("additionalFees", lang, showBilingual)}</div>
         <table>
           <thead>
             <tr>
-              <th>Fee Description</th>
-              <th>الوصف</th>
-              <th class="amount">Amount (AED)</th>
+              <th>${l("feeDesc", lang, showBilingual)}</th>
+              <th class="amount">${l("amountAED", lang, showBilingual)}</th>
             </tr>
           </thead>
           <tbody>
