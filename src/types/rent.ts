@@ -4,7 +4,7 @@ export interface Building {
   location: string;
 }
 
-export type UnitType = 'Office' | 'Showroom' | 'Shop' | '1 BR' | '2 BR' | '3 BR' | 'Villa' | 'Studio';
+export type UnitType = 'Office' | 'Showroom' | 'Shop' | 'Mezzanine' | '1 BR' | '2 BR' | '3 BR' | '4 BR' | '5 BR' | '9 BR' | 'Villa' | 'Studio';
 
 export interface Unit {
   id: string;
