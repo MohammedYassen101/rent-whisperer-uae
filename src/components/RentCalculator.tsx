@@ -22,7 +22,7 @@ import { rentCalculatorSchema } from "@/utils/validation";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function RentCalculator() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [tenantName, setTenantName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [contractType, setContractType] = useState<string>("");
