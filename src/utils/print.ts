@@ -79,6 +79,8 @@ const labels = {
   renewal: { en: "Renewal", ar: "تجديد" },
   newLeaseAdminFee: { en: "New Lease Administration Fee", ar: "رسوم إدارية (عقد جديد)" },
   renewalAdminFee: { en: "Renewal Administration Fee", ar: "رسوم إدارية (تجديد)" },
+  firstCheque: { en: "First Cheque Value", ar: "قيمة الشيك الأول" },
+  firstChequeDesc: { en: "First Payment + Security Deposit + Administration Fee", ar: "الدفعة الأولى + التأمين + الرسوم الإدارية" },
 };
 
 type LabelKey = keyof typeof labels;
@@ -141,6 +143,8 @@ export function printReceipt(data: PrintData): void {
     .join("");
 
   const totalRent = data.schedule.reduce((sum, item) => sum + item.amount, 0);
+  const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;
+  const firstChequeValue = firstPaymentAmount + data.securityDeposit + data.adminFee;
 
   const feeRows = data.fees
     .map(
@@ -275,6 +279,12 @@ export function printReceipt(data: PrintData): void {
             </tr>
           </tbody>
         </table>
+        <div class="highlight-box" style="margin-top:16px;background:#e8f5e9;border-color:#66bb6a;">
+          <div class="label" style="color:#2e7d32;">${l("firstCheque", lang, showBilingual)}</div>
+          <div style="font-size:10px;color:#555;margin-bottom:4px;">${l("firstChequeDesc", lang, showBilingual)}</div>
+          <div class="value" style="color:#1b5e20;">${amountDisplay(firstChequeValue, lang, showBilingual)}</div>
+          ${amountWordsHtml(firstChequeValue, lang, showBilingual)}
+        </div>
       </div>
 
       <div class="section">
