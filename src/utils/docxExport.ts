@@ -428,8 +428,24 @@ export async function exportDocx(data: DocxData): Promise<void> {
       properties: {
         page: {
           size: { width: 12240, height: 15840 },
-          margin: { top: 1080, right: 1440, bottom: 1080, left: 1440 },
+          margin: { top: 1080, right: 1440, bottom: 1440, left: 1440 },
         },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({ spacing: { before: 200 }, border: { top: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC", space: 8 } }, children: [] }),
+            new Paragraph({
+              alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
+              spacing: { after: 40 },
+              children: [new TextRun({ text: dl("tenantSignature", lang, bilingual), font: "Arial", size: 18, color: "666666" })],
+            }),
+            new Paragraph({
+              alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
+              children: [new TextRun({ text: dl("signatureLine", lang, bilingual), font: "Arial", size: 20, color: "333333" })],
+            }),
+          ],
+        }),
       },
       children,
     }],
