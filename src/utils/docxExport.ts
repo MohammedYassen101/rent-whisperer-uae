@@ -72,6 +72,9 @@ const docLabels = {
   renewalAdminFee: { en: "Renewal Administration Fee", ar: "رسوم إدارية (تجديد)" },
   firstCheque: { en: "First Cheque Value", ar: "قيمة الشيك الأول" },
   firstChequeDesc: { en: "First Payment + Security Deposit + Administration Fee", ar: "الدفعة الأولى + التأمين + الرسوم الإدارية" },
+  reportDate: { en: "Report Date", ar: "تاريخ إعداد التقرير" },
+  tenantSignature: { en: "Tenant Signature", ar: "توقيع المستأجر" },
+  signatureLine: { en: "____________________________", ar: "____________________________" },
 };
 
 type DocLabelKey = keyof typeof docLabels;
@@ -170,7 +173,19 @@ export async function exportDocx(data: DocxData): Promise<void> {
   }
   children.push(
     new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 40 }, children: [new TextRun({ text: dl("docTitle", lang, bilingual), font: "Arial", size: 28, bold: true, color: "333333" })] }),
-    new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: BRAND_COLOR, space: 8 } }, children: [new TextRun({ text: `${dl("generatedOn", lang, bilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}`, font: "Arial", size: 18, color: "888888" })] }),
+    new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 80 }, border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: BRAND_COLOR, space: 8 } }, children: [new TextRun({ text: `${dl("generatedOn", lang, bilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}`, font: "Arial", size: 18, color: "888888" })] }),
+  );
+
+  // Report preparation date
+  children.push(
+    new Paragraph({
+      spacing: { before: 80, after: 200 },
+      alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
+      children: [
+        new TextRun({ text: `${dl("reportDate", lang, bilingual)}: `, font: "Arial", size: 20, bold: true, color: "333333" }),
+        new TextRun({ text: format(new Date(), "dd / MM / yyyy"), font: "Arial", size: 20, color: "1A1A1A" }),
+      ],
+    }),
   );
 
   // Tenant Information
@@ -413,8 +428,24 @@ export async function exportDocx(data: DocxData): Promise<void> {
       properties: {
         page: {
           size: { width: 12240, height: 15840 },
-          margin: { top: 1080, right: 1440, bottom: 1080, left: 1440 },
+          margin: { top: 1080, right: 1440, bottom: 1440, left: 1440 },
         },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({ spacing: { before: 200 }, border: { top: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC", space: 8 } }, children: [] }),
+            new Paragraph({
+              alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
+              spacing: { after: 40 },
+              children: [new TextRun({ text: dl("tenantSignature", lang, bilingual), font: "Arial", size: 18, color: "666666" })],
+            }),
+            new Paragraph({
+              alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
+              children: [new TextRun({ text: dl("signatureLine", lang, bilingual), font: "Arial", size: 20, color: "333333" })],
+            }),
+          ],
+        }),
       },
       children,
     }],

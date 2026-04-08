@@ -81,6 +81,8 @@ const labels = {
   renewalAdminFee: { en: "Renewal Administration Fee", ar: "رسوم إدارية (تجديد)" },
   firstCheque: { en: "First Cheque Value", ar: "قيمة الشيك الأول" },
   firstChequeDesc: { en: "First Payment + Security Deposit + Administration Fee", ar: "الدفعة الأولى + التأمين + الرسوم الإدارية" },
+  reportDate: { en: "Report Date", ar: "تاريخ إعداد التقرير" },
+  tenantSignature: { en: "Tenant Signature", ar: "توقيع المستأجر" },
 };
 
 type LabelKey = keyof typeof labels;
@@ -194,9 +196,17 @@ export function printReceipt(data: PrintData): void {
         .summary-card { background: #f8f6f2; border-radius: 6px; padding: 12px; text-align: center; }
         .summary-card .label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
         .summary-card .value { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
+        .report-date { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 20px; }
         .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #e8d5a3; color: #888; font-size: 11px; }
         .footer .company { font-weight: 600; color: #7a1a1a; }
-        @media print { body { padding: 20px; } }
+        .signature-section { margin-top: 40px; padding-top: 16px; border-top: 1px solid #ccc; }
+        .signature-label { font-size: 12px; color: #666; margin-bottom: 4px; }
+        .signature-line { width: 250px; border-bottom: 1px solid #333; height: 40px; }
+        @media print {
+          body { padding: 20px; }
+          .signature-section { position: running(signature); }
+          @page { @bottom-center { content: element(signature); } }
+        }
       </style>
     </head>
     <body>
@@ -209,6 +219,10 @@ export function printReceipt(data: PrintData): void {
         }
         <div class="doc-title">${l("docTitle", lang, showBilingual)}</div>
         <div class="doc-date">${l("generatedOn", lang, showBilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}</div>
+      </div>
+
+      <div class="report-date" style="text-align:${isAr ? 'right' : 'left'};">
+        ${l("reportDate", lang, showBilingual)}: ${format(new Date(), "dd / MM / yyyy")}
       </div>
 
       <div class="section">
@@ -306,6 +320,11 @@ export function printReceipt(data: PrintData): void {
         <p class="company">Alyassia Properties L.L.C. | شركة الياسية للعقارات</p>
         <p>Omniah Tower, Mezzanine floor, 28 Al Bahhar St, Al Hisn, Al Markaziyah West, Abu Dhabi, UAE</p>
         <p>Tel: +971 2 667 3444 | Email: info@alyassiaproperties.ae</p>
+      </div>
+
+      <div class="signature-section" style="text-align:${isAr ? 'right' : 'left'};">
+        <div class="signature-label">${l("tenantSignature", lang, showBilingual)}</div>
+        <div class="signature-line" style="${isAr ? 'margin-right:0;margin-left:auto;' : ''}"></div>
       </div>
     </body>
     </html>
