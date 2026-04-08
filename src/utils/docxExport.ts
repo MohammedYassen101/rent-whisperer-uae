@@ -173,7 +173,19 @@ export async function exportDocx(data: DocxData): Promise<void> {
   }
   children.push(
     new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 40 }, children: [new TextRun({ text: dl("docTitle", lang, bilingual), font: "Arial", size: 28, bold: true, color: "333333" })] }),
-    new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: BRAND_COLOR, space: 8 } }, children: [new TextRun({ text: `${dl("generatedOn", lang, bilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}`, font: "Arial", size: 18, color: "888888" })] }),
+    new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 80 }, border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: BRAND_COLOR, space: 8 } }, children: [new TextRun({ text: `${dl("generatedOn", lang, bilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}`, font: "Arial", size: 18, color: "888888" })] }),
+  );
+
+  // Report preparation date
+  children.push(
+    new Paragraph({
+      spacing: { before: 80, after: 200 },
+      alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
+      children: [
+        new TextRun({ text: `${dl("reportDate", lang, bilingual)}: `, font: "Arial", size: 20, bold: true, color: "333333" }),
+        new TextRun({ text: format(new Date(), "dd / MM / yyyy"), font: "Arial", size: 20, color: "1A1A1A" }),
+      ],
+    }),
   );
 
   // Tenant Information
