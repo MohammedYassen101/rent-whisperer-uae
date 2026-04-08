@@ -221,6 +221,10 @@ export function printReceipt(data: PrintData): void {
         <div class="doc-date">${l("generatedOn", lang, showBilingual)} ${format(new Date(), "dd MMMM yyyy, hh:mm a")}</div>
       </div>
 
+      <div class="report-date" style="text-align:${isAr ? 'right' : 'left'};">
+        ${l("reportDate", lang, showBilingual)}: ${format(new Date(), "dd / MM / yyyy")}
+      </div>
+
       <div class="section">
         <div class="section-title">${l("tenantInfo", lang, showBilingual)}</div>
         <div class="info-grid">
