@@ -321,6 +321,11 @@ export function printReceipt(data: PrintData): void {
         <p>Omniah Tower, Mezzanine floor, 28 Al Bahhar St, Al Hisn, Al Markaziyah West, Abu Dhabi, UAE</p>
         <p>Tel: +971 2 667 3444 | Email: info@alyassiaproperties.ae</p>
       </div>
+
+      <div class="signature-section" style="text-align:${isAr ? 'right' : 'left'};">
+        <div class="signature-label">${l("tenantSignature", lang, showBilingual)}</div>
+        <div class="signature-line" style="${isAr ? 'margin-right:0;margin-left:auto;' : ''}"></div>
+      </div>
     </body>
     </html>
   `;
