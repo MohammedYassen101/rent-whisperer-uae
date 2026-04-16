@@ -75,6 +75,11 @@ const docLabels = {
   reportDate: { en: "Report Date", ar: "تاريخ إعداد التقرير" },
   tenantSignature: { en: "Tenant Signature", ar: "توقيع المستأجر" },
   signatureLine: { en: "____________________________", ar: "____________________________" },
+  signatureSection: { en: "Acknowledgement & Signature", ar: "الإقرار والتوقيع" },
+  signatureAck: { en: "I, the undersigned tenant, acknowledge that I have reviewed the above rent details and payment schedule and agree to the terms stated.", ar: "أقر أنا المستأجر الموقع أدناه بأنني اطلعت على تفاصيل الإيجار وجدول الدفعات أعلاه وأوافق على الشروط المذكورة." },
+  signatureName: { en: "Tenant Name:", ar: "اسم المستأجر:" },
+  signatureDate: { en: "Date:", ar: "التاريخ:" },
+  signatureSign: { en: "Signature:", ar: "التوقيع:" },
 };
 
 type DocLabelKey = keyof typeof docLabels;
@@ -415,6 +420,74 @@ export async function exportDocx(data: DocxData): Promise<void> {
   });
 
   children.push(new Table({ width: { size: 9360, type: WidthType.DXA }, columnWidths: feeColWidths, rows: feeTableRows }));
+
+  // Signature Section
+  const sigAlign = isAr ? AlignmentType.RIGHT : AlignmentType.LEFT;
+  const sigBorderSide = { style: BorderStyle.SINGLE, size: 1, color: GOLD_COLOR, space: 1 };
+  const sigBorderNone = { style: BorderStyle.NONE, size: 0 };
+
+  children.push(
+    new Paragraph({ spacing: { before: 400 }, children: [] }),
+    new Paragraph({
+      spacing: { before: 100 },
+      shading: { type: ShadingType.CLEAR, fill: LIGHT_BG },
+      border: { top: sigBorderSide, bottom: sigBorderNone, left: sigBorderSide, right: sigBorderSide },
+      alignment: sigAlign,
+      children: [new TextRun({ text: dl("signatureSection", lang, bilingual), font: "Arial", size: 22, bold: true, color: BRAND_COLOR })],
+    }),
+    new Paragraph({
+      shading: { type: ShadingType.CLEAR, fill: LIGHT_BG },
+      border: { top: sigBorderNone, bottom: sigBorderNone, left: sigBorderSide, right: sigBorderSide },
+      alignment: sigAlign,
+      spacing: { after: 200 },
+      children: [new TextRun({ text: dl("signatureAck", lang, bilingual), font: "Arial", size: 16, color: "555555" })],
+    }),
+  );
+
+  // Signature fields as a table
+  const sigLine = "____________________________";
+  const sigFieldRows = [
+    { label: dl("signatureName", lang, bilingual), value: data.tenantName },
+    { label: dl("signatureDate", lang, bilingual), value: sigLine },
+    { label: dl("signatureSign", lang, bilingual), value: sigLine },
+  ];
+
+  const sigFieldBorder = { style: BorderStyle.NONE, size: 0 };
+  const sigFieldBorders = { top: sigFieldBorder, bottom: sigFieldBorder, left: sigFieldBorder, right: sigFieldBorder };
+
+  const sigTableRows = sigFieldRows.map((field) =>
+    new TableRow({
+      children: [
+        new TableCell({
+          borders: sigFieldBorders,
+          width: { size: 2400, type: WidthType.DXA },
+          shading: { type: ShadingType.CLEAR, fill: LIGHT_BG },
+          margins: { top: 80, bottom: 80, left: 120, right: 40 },
+          children: [new Paragraph({ alignment: sigAlign, children: [new TextRun({ text: field.label, font: "Arial", size: 18, bold: true, color: "444444" })] })],
+        }),
+        new TableCell({
+          borders: sigFieldBorders,
+          width: { size: 6960, type: WidthType.DXA },
+          shading: { type: ShadingType.CLEAR, fill: LIGHT_BG },
+          margins: { top: 80, bottom: 80, left: 40, right: 120 },
+          children: [new Paragraph({ alignment: sigAlign, children: [new TextRun({ text: field.value, font: "Arial", size: 18, color: "333333" })] })],
+        }),
+      ],
+    }),
+  );
+
+  children.push(
+    new Table({
+      width: { size: 9360, type: WidthType.DXA },
+      columnWidths: [2400, 6960],
+      rows: sigTableRows,
+    }),
+    new Paragraph({
+      shading: { type: ShadingType.CLEAR, fill: LIGHT_BG },
+      border: { top: sigBorderNone, bottom: sigBorderSide, left: sigBorderSide, right: sigBorderSide },
+      children: [new TextRun({ text: " ", font: "Arial", size: 8 })],
+    }),
+  );
 
   // Footer
   children.push(
