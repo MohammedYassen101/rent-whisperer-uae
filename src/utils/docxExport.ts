@@ -71,7 +71,7 @@ const docLabels = {
   newLeaseAdminFee: { en: "New Lease Administration Fee", ar: "رسوم إدارية (عقد جديد)" },
   renewalAdminFee: { en: "Renewal Administration Fee", ar: "رسوم إدارية (تجديد)" },
   firstCheque: { en: "First Cheque Value", ar: "قيمة الشيك الأول" },
-  firstChequeDesc: { en: "First Payment + Security Deposit + Administration Fee", ar: "الدفعة الأولى + التأمين + الرسوم الإدارية" },
+  firstChequeDesc: { en: "First Payment + Administration Fee", ar: "الدفعة الأولى + الرسوم الإدارية" },
   reportDate: { en: "Report Date", ar: "تاريخ إعداد التقرير" },
   tenantSignature: { en: "Tenant Signature", ar: "توقيع المستأجر" },
   signatureLine: { en: "____________________________", ar: "____________________________" },
