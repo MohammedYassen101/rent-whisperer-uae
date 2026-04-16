@@ -104,11 +104,20 @@ export default function RentCalculator() {
 
     // Apply broker fee to all new leases
     const hasBrokerFee = leaseType === "new";
+    const years = isCommercial ? parseInt(leaseYears) : 1;
 
-    const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
-    const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
-
-    setResults({ calculation, schedule });
+    if (years > 1) {
+      // Multi-year commercial lease
+      const { schedules, yearlyRents } = generateMultiYearSchedule(
+        new Date(leaseStartDate), parseInt(numPayments), newRent, years, isCommercial, hasBrokerFee
+      );
+      const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
+      setResults({ calculation, schedule: schedules, yearlyRents });
+    } else {
+      const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
+      const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
+      setResults({ calculation, schedule });
+    }
 
     // Save for admin tracking (fire and forget)
     saveTenantRecord({
