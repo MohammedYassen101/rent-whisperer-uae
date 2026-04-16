@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calculator, Printer, Building2, DollarSign, Calendar, FileText, FileDown } from "lucide-react";
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById, units } from "@/data/buildings";
 import { fees } from "@/data/fees";
-import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
+import { calculateRent, generatePaymentSchedule, generateMultiYearSchedule, formatAED } from "@/utils/calculations";
 import { saveTenantRecord, getRentIncrease } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
 import { exportDocx } from "@/utils/docxExport";
@@ -32,10 +32,12 @@ export default function RentCalculator() {
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
   const [numPayments, setNumPayments] = useState<string>("4");
+  const [leaseYears, setLeaseYears] = useState<string>("1");
   const [leaseStartDate, setLeaseStartDate] = useState("");
   const [results, setResults] = useState<{
     calculation: RentCalculation;
     schedule: PaymentScheduleItem[];
+    yearlyRents?: number[];
   } | null>(null);
 
   const isCommercial = contractType === "commercial";
