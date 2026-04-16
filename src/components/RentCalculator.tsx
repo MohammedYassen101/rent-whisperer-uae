@@ -394,12 +394,14 @@ export default function RentCalculator() {
                       highlight
                     />
                   )}
-                  <SummaryCard
-                    label={t("result.securityDeposit")}
-                    value={formatAED(results.calculation.securityDeposit)}
-                    icon={<DollarSign className="w-4 h-4" />}
-                    highlight
-                  />
+                  {!(isCommercial && leaseType === "renewal") && (
+                    <SummaryCard
+                      label={t("result.securityDeposit")}
+                      value={formatAED(results.calculation.securityDeposit)}
+                      icon={<DollarSign className="w-4 h-4" />}
+                      highlight
+                    />
+                  )}
                   <SummaryCard
                     label={leaseType === "new" ? t("result.adminFeeNew") : t("result.adminFeeRenewal")}
                     value={formatAED(

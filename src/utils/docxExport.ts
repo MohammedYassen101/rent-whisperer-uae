@@ -244,7 +244,10 @@ export async function exportDocx(data: DocxData): Promise<void> {
   if (data.brokerFee > 0) {
     children.push(...highlightBox(dl("brokerFeeLabel", lang, bilingual), fmtAED(data.brokerFee, lang)));
   }
-  children.push(...highlightBox(dl("securityDeposit", lang, bilingual), fmtAED(data.securityDeposit, lang)));
+  const hideSecurityDeposit = data.isCommercial && data.leaseType === "Renewal";
+  if (!hideSecurityDeposit) {
+    children.push(...highlightBox(dl("securityDeposit", lang, bilingual), fmtAED(data.securityDeposit, lang)));
+  }
 
   // Payment Schedule
   const paymentsWord = data.numPayments > 1 ? (isAr ? "دفعات" : "Payments") : (isAr ? "دفعة" : "Payment");
@@ -319,7 +322,7 @@ export async function exportDocx(data: DocxData): Promise<void> {
 
   // First Cheque Value
   const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;
-  const firstChequeValue = firstPaymentAmount + data.securityDeposit + data.adminFee;
+  const firstChequeValue = firstPaymentAmount + (hideSecurityDeposit ? 0 : data.securityDeposit) + data.adminFee;
   const greenBorderSide = { style: BorderStyle.SINGLE, size: 1, color: "66BB6A", space: 1 };
   const greenBorderNone = { style: BorderStyle.NONE, size: 0 };
   children.push(

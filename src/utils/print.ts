@@ -146,7 +146,8 @@ export function printReceipt(data: PrintData): void {
 
   const totalRent = data.schedule.reduce((sum, item) => sum + item.amount, 0);
   const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;
-  const firstChequeValue = firstPaymentAmount + data.securityDeposit + data.adminFee;
+  const hideSecurityDeposit = data.isCommercial && data.leaseType === "Renewal";
+  const firstChequeValue = firstPaymentAmount + (hideSecurityDeposit ? 0 : data.securityDeposit) + data.adminFee;
 
   const feeRows = data.fees
     .map(
@@ -264,10 +265,10 @@ export function printReceipt(data: PrintData): void {
             <div class="label">${l("brokerFeeLabel", lang, showBilingual)}</div>
             <div class="value">${amountDisplay(data.brokerFee, lang, showBilingual)}</div>
           </div>` : ""}
-        <div class="highlight-box" style="margin-top:8px;">
+        ${!hideSecurityDeposit ? `<div class="highlight-box" style="margin-top:8px;">
           <div class="label">${l("securityDeposit", lang, showBilingual)}</div>
           <div class="value">${amountDisplay(data.securityDeposit, lang, showBilingual)}</div>
-        </div>
+        </div>` : ""}
       </div>
 
       <div class="section">
