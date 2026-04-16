@@ -80,6 +80,9 @@ const docLabels = {
   signatureName: { en: "Tenant Name:", ar: "اسم المستأجر:" },
   signatureDate: { en: "Date:", ar: "التاريخ:" },
   signatureSign: { en: "Signature:", ar: "التوقيع:" },
+  year: { en: "Year", ar: "السنة" },
+  yearRent: { en: "Annual Rent for Year", ar: "الإيجار السنوي للسنة" },
+  increase5: { en: "(+5% increase)", ar: "(زيادة 5%)" },
 };
 
 type DocLabelKey = keyof typeof docLabels;
