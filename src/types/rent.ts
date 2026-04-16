@@ -45,6 +45,7 @@ export interface PaymentScheduleItem {
   includesVat: boolean;
   vatAmount: number;
   baseAmount: number;
+  year?: number;
 }
 
 export interface TenantRecord {
