@@ -137,7 +137,8 @@ export default function RentCalculator() {
     if (!results || !selectedBuilding || !selectedUnit) return;
 
     const leaseStart = new Date(leaseStartDate);
-    const leaseEnd = addMonths(leaseStart, 12);
+    const years = isCommercial ? parseInt(leaseYears) : 1;
+    const leaseEnd = addMonths(leaseStart, 12 * years);
 
     const adminFeeItem = leaseType === "new"
       ? fees.find(f => f.id === "new-lease")
@@ -349,6 +350,24 @@ export default function RentCalculator() {
                 </SelectContent>
               </Select>
             </div>
+
+            {isCommercial && (
+              <div className="space-y-2">
+                <Label>{t("calc.leaseYears")}</Label>
+                <Select value={leaseYears} onValueChange={setLeaseYears}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">{t("calc.1year")}</SelectItem>
+                    <SelectItem value="2">{t("calc.2years")}</SelectItem>
+                    <SelectItem value="3">{t("calc.3years")}</SelectItem>
+                    <SelectItem value="4">{t("calc.4years")}</SelectItem>
+                    <SelectItem value="5">{t("calc.5years")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="startDate">{t("calc.leaseStart")} *</Label>
