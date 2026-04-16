@@ -75,6 +75,11 @@ const docLabels = {
   reportDate: { en: "Report Date", ar: "تاريخ إعداد التقرير" },
   tenantSignature: { en: "Tenant Signature", ar: "توقيع المستأجر" },
   signatureLine: { en: "____________________________", ar: "____________________________" },
+  signatureSection: { en: "Acknowledgement & Signature", ar: "الإقرار والتوقيع" },
+  signatureAck: { en: "I, the undersigned tenant, acknowledge that I have reviewed the above rent details and payment schedule and agree to the terms stated.", ar: "أقر أنا المستأجر الموقع أدناه بأنني اطلعت على تفاصيل الإيجار وجدول الدفعات أعلاه وأوافق على الشروط المذكورة." },
+  signatureName: { en: "Tenant Name:", ar: "اسم المستأجر:" },
+  signatureDate: { en: "Date:", ar: "التاريخ:" },
+  signatureSign: { en: "Signature:", ar: "التوقيع:" },
 };
 
 type DocLabelKey = keyof typeof docLabels;
