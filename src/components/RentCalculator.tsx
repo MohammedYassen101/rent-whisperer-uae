@@ -508,7 +508,8 @@ export default function RentCalculator() {
                 <Button onClick={() => {
                   if (!results || !selectedBuilding || !selectedUnit) return;
                   const leaseStart = new Date(leaseStartDate);
-                  const leaseEnd = addMonths(leaseStart, 12);
+                  const yrs = isCommercial ? parseInt(leaseYears) : 1;
+                  const leaseEnd = addMonths(leaseStart, 12 * yrs);
                   const adminFeeItem = leaseType === "new" ? fees.find(f => f.id === "new-lease") : fees.find(f => f.id === "lease-renewal");
                   const adminFee = adminFeeItem ? (isCommercial ? adminFeeItem.amountCommercial : adminFeeItem.amountResidential) : 0;
                   const adminFeeLabel = leaseType === "new" ? "New Lease Administration Fee" : "Renewal Administration Fee";
