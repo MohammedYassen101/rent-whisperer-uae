@@ -465,7 +465,7 @@ export default function RentCalculator() {
               )}
 
               {/* Payment Schedule */}
-              <PaymentSchedule schedule={results.schedule} />
+              <PaymentSchedule schedule={results.schedule} yearlyRents={results.yearlyRents} />
 
               {/* Fee Schedule */}
               <Card className="shadow-card">
