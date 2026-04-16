@@ -83,6 +83,9 @@ const labels = {
   firstChequeDesc: { en: "First Payment + Administration Fee", ar: "الدفعة الأولى + الرسوم الإدارية" },
   reportDate: { en: "Report Date", ar: "تاريخ إعداد التقرير" },
   tenantSignature: { en: "Tenant Signature", ar: "توقيع المستأجر" },
+  year: { en: "Year", ar: "السنة" },
+  yearRent: { en: "Annual Rent for Year", ar: "الإيجار السنوي للسنة" },
+  increase5: { en: "(+5% increase)", ar: "(زيادة 5%)" },
 };
 
 type LabelKey = keyof typeof labels;
@@ -127,9 +130,17 @@ export function printReceipt(data: PrintData): void {
     ? l("newLease", lang, showBilingual)
     : l("renewal", lang, showBilingual);
 
-  const scheduleRows = data.schedule
-    .map(
-      (item) => `
+  const hasMultipleYears = data.schedule.some(s => s.year && s.year > 1);
+
+  let scheduleRows = "";
+  let prevYear = 0;
+  data.schedule.forEach((item) => {
+    const yr = item.year || 1;
+    if (hasMultipleYears && yr !== prevYear) {
+      scheduleRows += `<tr class="year-header"><td colspan="5" style="background:#7a1a1a;color:#fff;font-weight:700;padding:8px 12px;font-size:12px;">${l("year", lang, showBilingual)} ${yr}</td></tr>`;
+      prevYear = yr;
+    }
+    scheduleRows += `
     <tr class="${item.includesVat ? "vat-row" : ""}">
       <td>${item.paymentNumber}</td>
       <td>${format(item.date, "dd MMM yyyy")}</td>
@@ -139,10 +150,8 @@ export function printReceipt(data: PrintData): void {
         <strong>${amountDisplay(item.amount, lang, showBilingual)}</strong>
         ${amountWordsHtml(item.amount, lang, showBilingual)}
       </td>
-    </tr>
-  `
-    )
-    .join("");
+    </tr>`;
+  });
 
   const totalRent = data.schedule.reduce((sum, item) => sum + item.amount, 0);
   const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;

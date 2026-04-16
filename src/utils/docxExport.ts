@@ -80,6 +80,9 @@ const docLabels = {
   signatureName: { en: "Tenant Name:", ar: "اسم المستأجر:" },
   signatureDate: { en: "Date:", ar: "التاريخ:" },
   signatureSign: { en: "Signature:", ar: "التوقيع:" },
+  year: { en: "Year", ar: "السنة" },
+  yearRent: { en: "Annual Rent for Year", ar: "الإيجار السنوي للسنة" },
+  increase5: { en: "(+5% increase)", ar: "(زيادة 5%)" },
 };
 
 type DocLabelKey = keyof typeof docLabels;
@@ -271,7 +274,30 @@ export async function exportDocx(data: DocxData): Promise<void> {
 
   const scheduleTableRows = [new TableRow({ children: headerCells })];
 
+  const hasMultipleYears = data.schedule.some(s => s.year && s.year > 1);
+  let prevYear = 0;
+
   data.schedule.forEach((item, idx) => {
+    const yr = item.year || 1;
+    // Insert year header row for multi-year
+    if (hasMultipleYears && yr !== prevYear) {
+      scheduleTableRows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              borders: cellBorders,
+              columnSpan: 5,
+              width: { size: 9360, type: WidthType.DXA },
+              shading: { type: ShadingType.CLEAR, fill: BRAND_COLOR },
+              margins: { top: 40, bottom: 40, left: 80, right: 80 },
+              children: [new Paragraph({ children: [new TextRun({ text: `${dl("year", lang, bilingual)} ${yr}`, font: "Arial", size: 18, bold: true, color: "FFFFFF" })] })],
+            }),
+          ],
+        }),
+      );
+      prevYear = yr;
+    }
+
     const isEven = idx % 2 === 0;
     const bg = item.includesVat ? GOLD_BG : isEven ? "FFFFFF" : "FAFAFA";
     const cells = [

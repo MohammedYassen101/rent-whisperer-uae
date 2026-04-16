@@ -58,6 +58,15 @@ const translations: Record<string, Record<Language, string>> = {
   "calc.4payments": { en: "4 Payments (Quarterly)", ar: "4 دفعات (ربع سنوي)" },
   "calc.6payments": { en: "6 Payments (Bi-Monthly)", ar: "6 دفعات (كل شهرين)" },
   "calc.12payments": { en: "12 Payments (Monthly)", ar: "12 دفعة (شهري)" },
+  "calc.leaseYears": { en: "Lease Duration (Years)", ar: "مدة العقد (سنوات)" },
+  "calc.1year": { en: "1 Year", ar: "سنة واحدة" },
+  "calc.2years": { en: "2 Years", ar: "سنتان" },
+  "calc.3years": { en: "3 Years", ar: "3 سنوات" },
+  "calc.4years": { en: "4 Years", ar: "4 سنوات" },
+  "calc.5years": { en: "5 Years", ar: "5 سنوات" },
+  "result.year": { en: "Year", ar: "السنة" },
+  "result.yearRent": { en: "Annual Rent for Year", ar: "الإيجار السنوي للسنة" },
+  "result.increase5": { en: "(+5% increase)", ar: "(زيادة 5%)" },
 
   // Results
   "result.summary": { en: "Rent Summary", ar: "ملخص الإيجار" },

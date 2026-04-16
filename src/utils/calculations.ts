@@ -50,10 +50,57 @@ export function generatePaymentSchedule(
       includesVat: isFirst && rentCalc.vatAmount > 0,
       vatAmount,
       baseAmount,
+      year: 1,
     });
   }
 
   return schedule;
+}
+
+/**
+ * Generate a multi-year payment schedule for commercial contracts.
+ * Each subsequent year applies a 5% increase on the previous year's rent.
+ * VAT is applied to the first payment of each year.
+ */
+export function generateMultiYearSchedule(
+  leaseStartDate: Date,
+  numPayments: number,
+  baseAnnualRent: number,
+  leaseYears: number,
+  isCommercial: boolean,
+  hasBrokerFee: boolean = false
+): { schedules: PaymentScheduleItem[]; yearlyRents: number[] } {
+  const allPayments: PaymentScheduleItem[] = [];
+  const yearlyRents: number[] = [];
+  let paymentCounter = 0;
+
+  for (let year = 0; year < leaseYears; year++) {
+    const yearRent = Math.round(baseAnnualRent * Math.pow(1.05, year) * 100) / 100;
+    yearlyRents.push(yearRent);
+    const yearStartDate = addMonths(leaseStartDate, year * 12);
+    const calc = calculateRent(yearRent, numPayments, isCommercial, year === 0 ? hasBrokerFee : false);
+    const monthsBetween = 12 / numPayments;
+
+    for (let i = 0; i < numPayments; i++) {
+      paymentCounter++;
+      const paymentDate = addMonths(yearStartDate, i * monthsBetween);
+      const isFirst = i === 0;
+      const vatAmount = isFirst ? calc.vatAmount : 0;
+      const baseAmount = calc.paymentAmount;
+
+      allPayments.push({
+        paymentNumber: paymentCounter,
+        date: paymentDate,
+        amount: baseAmount + vatAmount,
+        includesVat: isFirst && calc.vatAmount > 0,
+        vatAmount,
+        baseAmount,
+        year: year + 1,
+      });
+    }
+  }
+
+  return { schedules: allPayments, yearlyRents };
 }
 
 export function formatAED(amount: number): string {

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calculator, Printer, Building2, DollarSign, Calendar, FileText, FileDown } from "lucide-react";
 import { buildings, getUnitsByBuilding, isCommercialUnit, getBuildingById, getUnitById, units } from "@/data/buildings";
 import { fees } from "@/data/fees";
-import { calculateRent, generatePaymentSchedule, formatAED } from "@/utils/calculations";
+import { calculateRent, generatePaymentSchedule, generateMultiYearSchedule, formatAED } from "@/utils/calculations";
 import { saveTenantRecord, getRentIncrease } from "@/utils/storage";
 import { printReceipt } from "@/utils/print";
 import { exportDocx } from "@/utils/docxExport";
@@ -32,10 +32,12 @@ export default function RentCalculator() {
   const [unitId, setUnitId] = useState("");
   const [annualRent, setAnnualRent] = useState<number>(0);
   const [numPayments, setNumPayments] = useState<string>("4");
+  const [leaseYears, setLeaseYears] = useState<string>("1");
   const [leaseStartDate, setLeaseStartDate] = useState("");
   const [results, setResults] = useState<{
     calculation: RentCalculation;
     schedule: PaymentScheduleItem[];
+    yearlyRents?: number[];
   } | null>(null);
 
   const isCommercial = contractType === "commercial";
@@ -102,11 +104,20 @@ export default function RentCalculator() {
 
     // Apply broker fee to all new leases
     const hasBrokerFee = leaseType === "new";
+    const years = isCommercial ? parseInt(leaseYears) : 1;
 
-    const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
-    const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
-
-    setResults({ calculation, schedule });
+    if (years > 1) {
+      // Multi-year commercial lease
+      const { schedules, yearlyRents } = generateMultiYearSchedule(
+        new Date(leaseStartDate), parseInt(numPayments), newRent, years, isCommercial, hasBrokerFee
+      );
+      const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
+      setResults({ calculation, schedule: schedules, yearlyRents });
+    } else {
+      const calculation = calculateRent(newRent, parseInt(numPayments), isCommercial, hasBrokerFee);
+      const schedule = generatePaymentSchedule(new Date(leaseStartDate), parseInt(numPayments), calculation);
+      setResults({ calculation, schedule });
+    }
 
     // Save for admin tracking (fire and forget)
     saveTenantRecord({
@@ -126,7 +137,8 @@ export default function RentCalculator() {
     if (!results || !selectedBuilding || !selectedUnit) return;
 
     const leaseStart = new Date(leaseStartDate);
-    const leaseEnd = addMonths(leaseStart, 12);
+    const years = isCommercial ? parseInt(leaseYears) : 1;
+    const leaseEnd = addMonths(leaseStart, 12 * years);
 
     const adminFeeItem = leaseType === "new"
       ? fees.find(f => f.id === "new-lease")
@@ -339,6 +351,24 @@ export default function RentCalculator() {
               </Select>
             </div>
 
+            {isCommercial && (
+              <div className="space-y-2">
+                <Label>{t("calc.leaseYears")}</Label>
+                <Select value={leaseYears} onValueChange={setLeaseYears}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">{t("calc.1year")}</SelectItem>
+                    <SelectItem value="2">{t("calc.2years")}</SelectItem>
+                    <SelectItem value="3">{t("calc.3years")}</SelectItem>
+                    <SelectItem value="4">{t("calc.4years")}</SelectItem>
+                    <SelectItem value="5">{t("calc.5years")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="startDate">{t("calc.leaseStart")} *</Label>
               <Input
@@ -435,7 +465,7 @@ export default function RentCalculator() {
               )}
 
               {/* Payment Schedule */}
-              <PaymentSchedule schedule={results.schedule} />
+              <PaymentSchedule schedule={results.schedule} yearlyRents={results.yearlyRents} />
 
               {/* Fee Schedule */}
               <Card className="shadow-card">
@@ -478,7 +508,8 @@ export default function RentCalculator() {
                 <Button onClick={() => {
                   if (!results || !selectedBuilding || !selectedUnit) return;
                   const leaseStart = new Date(leaseStartDate);
-                  const leaseEnd = addMonths(leaseStart, 12);
+                  const yrs = isCommercial ? parseInt(leaseYears) : 1;
+                  const leaseEnd = addMonths(leaseStart, 12 * yrs);
                   const adminFeeItem = leaseType === "new" ? fees.find(f => f.id === "new-lease") : fees.find(f => f.id === "lease-renewal");
                   const adminFee = adminFeeItem ? (isCommercial ? adminFeeItem.amountCommercial : adminFeeItem.amountResidential) : 0;
                   const adminFeeLabel = leaseType === "new" ? "New Lease Administration Fee" : "Renewal Administration Fee";
