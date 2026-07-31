@@ -155,7 +155,7 @@ export function printReceipt(data: PrintData): void {
 
   const totalRent = data.schedule.reduce((sum, item) => sum + item.amount, 0);
   const firstPaymentAmount = data.schedule.length > 0 ? data.schedule[0].amount : 0;
-  const hideSecurityDeposit = data.isCommercial && data.leaseType === "Renewal";
+  const hideSecurityDeposit = data.leaseType === "Renewal";
   const firstChequeValue = firstPaymentAmount + (hideSecurityDeposit ? 0 : data.securityDeposit) + data.adminFee;
 
   const feeRows = data.fees

@@ -252,7 +252,7 @@ export async function exportDocx(data: DocxData): Promise<void> {
   if (data.brokerFee > 0) {
     children.push(...highlightBox(dl("brokerFeeLabel", lang, bilingual), fmtAED(data.brokerFee, lang)));
   }
-  const hideSecurityDeposit = data.isCommercial && data.leaseType === "Renewal";
+  const hideSecurityDeposit = data.leaseType === "Renewal";
   if (!hideSecurityDeposit) {
     children.push(...highlightBox(dl("securityDeposit", lang, bilingual), fmtAED(data.securityDeposit, lang)));
   }

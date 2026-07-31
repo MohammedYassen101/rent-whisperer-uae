@@ -424,7 +424,7 @@ export default function RentCalculator() {
                       highlight
                     />
                   )}
-                  {!(isCommercial && leaseType === "renewal") && (
+                  {leaseType !== "renewal" && (
                     <SummaryCard
                       label={t("result.securityDeposit")}
                       value={formatAED(results.calculation.securityDeposit)}
